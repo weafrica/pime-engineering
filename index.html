@@ -1,0 +1,944 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pime Engineering — Precision in Mechanical Engineering</title>
+<meta name="description" content="Pime Engineering is a precision mechanical engineering workshop in Benoni, Gauteng — precision machining, metal fabrication and welding, mechanical installation, plant maintenance and equipment repairs.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚙️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#1B3358;
+    --navy-dark:#0F1E33;
+    --gold:#B3872C;
+    --gold-light:#D9A94A;
+    --cream:#F6F2E7;
+    --paper:#FFFDF8;
+    --ink:#1D2128;
+    --steel:#5C6672;
+    --line:#E2DAC4;
+    --radius:2px;
+    --maxw:1180px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --cream:#171512;
+      --paper:#1E1B17;
+      --ink:#EFEAE0;
+      --steel:#B3AA9C;
+      --line:#3A3529;
+      --navy:#20365C;
+      --navy-dark:#0F1E33;
+    }
+  }
+  :root[data-theme="dark"]{
+    --cream:#171512;
+    --paper:#1E1B17;
+    --ink:#EFEAE0;
+    --steel:#B3AA9C;
+    --line:#3A3529;
+    --navy:#20365C;
+    --navy-dark:#0F1E33;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
+  }
+  body{
+    margin:0;
+    background:var(--cream);
+    color:var(--ink);
+    font-family:"IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    font-size:16px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,h4{
+    font-family:"Oswald", ui-sans-serif, system-ui, sans-serif;
+    font-weight:600;
+    margin:0;
+    color:var(--navy);
+    letter-spacing:0.01em;
+  }
+  :root[data-theme="dark"] h1, :root[data-theme="dark"] h2, :root[data-theme="dark"] h3, :root[data-theme="dark"] h4{ color:var(--gold-light); }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]) h1, :root:not([data-theme="light"]) h2, :root:not([data-theme="light"]) h3, :root:not([data-theme="light"]) h4{ color:var(--gold-light); }
+  }
+  p{margin:0 0 1em;}
+  a{color:inherit;}
+  img{max-width:100%;display:block;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px;}
+  button{font-family:inherit;}
+  a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible{
+    outline:3px solid var(--gold-light);
+    outline-offset:2px;
+  }
+
+  /* ---------- Section label (diamond bullet, matches print profile) ---------- */
+  .kicker{
+    display:flex;align-items:center;gap:10px;
+    font-family:"Oswald", sans-serif;
+    font-weight:600;
+    font-size:1.9rem;
+    color:var(--navy);
+    margin-bottom:8px;
+  }
+  :root[data-theme="dark"] .kicker, :root:not([data-theme="light"]) .kicker { color: var(--gold-light); }
+  @media (prefers-color-scheme: light){ :root:not([data-theme="dark"]) .kicker{ color: var(--navy);} }
+  .kicker::before{
+    content:"";
+    width:11px;height:11px;
+    background:var(--gold);
+    transform:rotate(45deg);
+    flex:none;
+  }
+  .section-intro{color:var(--steel);max-width:62ch;margin-top:14px;}
+
+  /* ---------- Top bar ---------- */
+  .topbar{
+    position:sticky;top:0;z-index:40;
+    background:var(--navy-dark);
+    border-bottom:3px solid var(--gold);
+  }
+  .topbar .wrap{
+    display:flex;align-items:center;justify-content:space-between;
+    height:74px;
+  }
+  .brand{display:flex;align-items:center;gap:12px;text-decoration:none;}
+  .brand .plate{
+    background:var(--paper);
+    padding:6px 10px;
+    border-radius:var(--radius);
+    display:flex;align-items:center;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08);
+  }
+  .brand .plate img{height:30px;width:auto;display:block;}
+  nav.mainnav{display:flex;align-items:center;gap:28px;}
+  nav.mainnav a{
+    color:#E9E3D2;
+    text-decoration:none;
+    font-size:0.95rem;
+    font-weight:500;
+    position:relative;
+    padding:6px 2px;
+  }
+  nav.mainnav a::after{
+    content:"";position:absolute;left:0;right:100%;bottom:0;height:2px;background:var(--gold-light);
+    transition:right 0.2s ease;
+  }
+  nav.mainnav a:hover::after{right:0;}
+  .navcta{display:flex;align-items:center;gap:14px;}
+  .phonelink{
+    color:#E9E3D2;text-decoration:none;font-size:0.92rem;font-weight:500;
+    display:flex;align-items:center;gap:6px;
+  }
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    padding:11px 22px;
+    font-weight:600;font-size:0.95rem;
+    border-radius:var(--radius);
+    text-decoration:none;
+    border:1.5px solid transparent;
+    cursor:pointer;
+    transition:transform 0.15s ease, background 0.15s ease, border-color .15s ease, color .15s ease;
+    font-family:"IBM Plex Sans", sans-serif;
+  }
+  .btn:hover{transform:translateY(-1px);}
+  .btn-gold{background:var(--gold);color:#241B08;}
+  .btn-gold:hover{background:var(--gold-light);}
+  .btn-outline{border-color:#4C5A73;color:#E9E3D2;background:transparent;}
+  .btn-outline:hover{border-color:var(--gold-light);color:var(--gold-light);}
+  .btn-ink{border-color:var(--navy);color:var(--navy);background:transparent;}
+  :root[data-theme="dark"] .btn-ink, :root:not([data-theme="light"]) .btn-ink{border-color:var(--gold-light); color:var(--gold-light);}
+  .btn-ink:hover{background:var(--navy);color:#fff;}
+
+  .hamburger{display:none;background:none;border:0;color:#E9E3D2;padding:8px;cursor:pointer;}
+  .hamburger svg{width:26px;height:26px;}
+
+  /* ---------- Hero ---------- */
+  .hero{
+    position:relative;
+    padding:76px 0 0;
+    overflow:hidden;
+    background:
+      linear-gradient(var(--cream), var(--cream));
+  }
+  .hero::before{
+    content:"";position:absolute;inset:0;
+    background-image:
+      linear-gradient(to right, rgba(27,51,88,0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(27,51,88,0.05) 1px, transparent 1px);
+    background-size:40px 40px;
+    mask-image:radial-gradient(ellipse 80% 60% at 30% 20%, #000 40%, transparent 90%);
+    pointer-events:none;
+  }
+  .hero .wrap{
+    position:relative;
+    display:grid;
+    grid-template-columns:1.05fr 0.95fr;
+    gap:56px;
+    align-items:center;
+    padding-bottom:64px;
+  }
+  .hero h1{
+    font-size:clamp(2.1rem, 4vw, 3.1rem);
+    line-height:1.12;
+    max-width:15ch;
+  }
+  .hero .lede{
+    margin-top:22px;
+    font-size:1.08rem;
+    color:var(--steel);
+    max-width:46ch;
+  }
+  .hero .ctas{display:flex;gap:14px;margin-top:32px;flex-wrap:wrap;}
+  .hero-figure{
+    position:relative;
+    opacity:0;
+    transform:translateY(14px);
+    animation:riseIn 0.7s ease 0.15s forwards;
+  }
+  @keyframes riseIn{to{opacity:1;transform:translateY(0);}}
+  .hero-figure .frame{
+    position:relative;
+    background:var(--navy-dark);
+    padding:14px;
+    transform:rotate(-1.4deg);
+    box-shadow:0 22px 46px -18px rgba(15,30,51,0.55);
+  }
+  .hero-figure img{width:100%;height:340px;object-fit:cover;display:block;}
+  .corner{position:absolute;width:22px;height:22px;border-color:var(--gold-light);border-style:solid;border-width:0;}
+  .corner.tl{top:6px;left:6px;border-top-width:2px;border-left-width:2px;}
+  .corner.br{bottom:6px;right:6px;border-bottom-width:2px;border-right-width:2px;}
+  .hero-figure .tag{
+    position:absolute;left:-14px;bottom:-18px;
+    background:var(--gold);
+    color:#241B08;
+    font-family:"Oswald", sans-serif;
+    font-size:0.8rem;
+    font-weight:600;
+    padding:9px 16px;
+    letter-spacing:0.03em;
+    box-shadow:0 8px 18px -8px rgba(0,0,0,0.4);
+  }
+  /* ---------- Spec strip ---------- */
+  .specstrip{
+    background:var(--navy);
+    border-top:3px solid var(--gold);
+    border-bottom:3px solid var(--gold);
+  }
+  .specstrip .wrap{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:0;
+  }
+  .specitem{
+    padding:22px 24px;
+    border-left:1px solid rgba(255,255,255,0.12);
+  }
+  .specitem:first-child{border-left:none;}
+  .specitem .label{
+    font-family:"Oswald", sans-serif;
+    font-size:0.72rem;
+    letter-spacing:0.14em;
+    color:var(--gold-light);
+    font-weight:500;
+  }
+  .specitem .value{
+    margin-top:6px;
+    color:#F1EEE3;
+    font-weight:500;
+    font-size:1.02rem;
+  }
+  .specitem .value a{color:#F1EEE3;text-decoration:none;}
+  .specitem .value a:hover{color:var(--gold-light);}
+
+  /* ---------- Generic section spacing ---------- */
+  section{padding:88px 0;}
+  section.tight{padding:72px 0;}
+
+  /* ---------- About ---------- */
+  .about .wrap{
+    display:grid;
+    grid-template-columns:1.1fr 0.9fr;
+    gap:64px;
+    align-items:start;
+  }
+  .about-copy p{color:var(--ink);font-size:1.02rem;max-width:56ch;}
+  .mission{
+    margin-top:28px;
+    border-left:3px solid var(--gold);
+    padding:4px 0 4px 22px;
+  }
+  .mission .label{
+    font-family:"Oswald",sans-serif;font-size:0.78rem;letter-spacing:0.12em;
+    color:var(--gold);font-weight:600;
+  }
+  .mission p{margin-top:8px;color:var(--navy);font-size:1.12rem;font-weight:500;max-width:44ch;}
+  :root[data-theme="dark"] .mission p, :root:not([data-theme="light"]) .mission p{color:var(--gold-light);}
+  .about-figure{position:relative;}
+  .about-figure img{width:100%;height:420px;object-fit:cover;}
+  .about-figure .corner{border-color:var(--gold);}
+
+  /* ---------- Services ---------- */
+  .services{background:var(--paper);border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+  .svc-list{margin-top:40px;border-top:1px solid var(--line);}
+  .svc-row{
+    display:grid;
+    grid-template-columns:84px 1fr 2fr;
+    gap:24px;
+    align-items:baseline;
+    padding:22px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .svc-row .code{
+    font-family:"Oswald", sans-serif;
+    color:var(--gold);
+    font-weight:600;
+    font-size:0.95rem;
+  }
+  .svc-row .name{
+    font-family:"Oswald", sans-serif;
+    font-weight:500;
+    font-size:1.18rem;
+    color:var(--navy);
+  }
+  :root[data-theme="dark"] .svc-row .name, :root:not([data-theme="light"]) .svc-row .name{color:var(--gold-light);}
+  .svc-row .desc{color:var(--steel);font-size:0.98rem;}
+
+  /* ---------- Why us ---------- */
+  .why .wrap{
+    display:grid;
+    grid-template-columns:0.9fr 1.1fr;
+    gap:64px;
+    align-items:center;
+  }
+  .why-photos{position:relative;height:420px;}
+  .why-photos img{position:absolute;object-fit:cover;box-shadow:0 20px 40px -20px rgba(15,30,51,0.4);}
+  .why-photos .p1{width:72%;height:78%;top:0;left:0;}
+  .why-photos .p2{width:55%;height:52%;bottom:0;right:0;border:6px solid var(--cream);}
+  .why-grid{display:grid;grid-template-columns:1fr 1fr;gap:34px 40px;}
+  .why-item .num{
+    font-family:"Oswald",sans-serif;color:var(--gold);font-weight:600;font-size:0.85rem;letter-spacing:0.08em;
+  }
+  .why-item h3{font-size:1.18rem;margin-top:6px;}
+  .why-item p{color:var(--steel);margin-top:8px;font-size:0.96rem;}
+
+  /* ---------- Work / gallery ---------- */
+  .work{background:var(--cream);}
+  .work-head{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:20px;}
+  .filters{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px;}
+  .filt{
+    border:1px solid var(--line);
+    background:var(--paper);
+    color:var(--steel);
+    padding:9px 16px;
+    font-size:0.88rem;
+    font-weight:500;
+    border-radius:999px;
+    cursor:pointer;
+    transition:background .15s ease,color .15s ease,border-color .15s ease;
+  }
+  .filt:hover{border-color:var(--gold);}
+  .filt.active{background:var(--navy);border-color:var(--navy);color:#fff;}
+  .gallery{
+    margin-top:34px;
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:16px;
+  }
+  .shot{
+    margin:0;position:relative;overflow:hidden;
+    background:var(--paper);
+    cursor:zoom-in;
+    border:1px solid var(--line);
+  }
+  .shot img{width:100%;height:170px;object-fit:cover;display:block;transition:transform .35s ease;}
+  .shot:hover img{transform:scale(1.06);}
+  .shot figcaption{
+    font-size:0.78rem;color:var(--steel);
+    padding:9px 10px 11px;
+    line-height:1.3;
+  }
+  .shot.hide{display:none;}
+
+  /* Lightbox */
+  .lightbox{
+    position:fixed;inset:0;background:rgba(10,16,26,0.92);
+    display:none;align-items:center;justify-content:center;
+    z-index:100;padding:36px;
+  }
+  .lightbox.open{display:flex;}
+  .lightbox img{max-width:min(920px,90vw);max-height:78vh;object-fit:contain;box-shadow:0 30px 60px rgba(0,0,0,0.5);}
+  .lightbox .lb-cap{color:#EFEAE0;text-align:center;margin-top:16px;font-size:0.95rem;}
+  .lightbox .lb-close, .lightbox .lb-prev, .lightbox .lb-next{
+    position:absolute;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.25);
+    color:#fff;width:44px;height:44px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;cursor:pointer;
+  }
+  .lightbox .lb-close{top:24px;right:24px;}
+  .lightbox .lb-prev{left:20px;top:50%;transform:translateY(-50%);}
+  .lightbox .lb-next{right:20px;top:50%;transform:translateY(-50%);}
+  .lightbox .lb-close:hover, .lightbox .lb-prev:hover, .lightbox .lb-next:hover{border-color:var(--gold-light);}
+
+  /* ---------- Contact ---------- */
+  .contact{background:var(--paper);border-top:1px solid var(--line);}
+  .contact .wrap{display:grid;grid-template-columns:0.85fr 1.15fr;gap:64px;}
+  .contact-list{margin-top:30px;display:flex;flex-direction:column;gap:22px;}
+  .contact-list .row{display:flex;gap:14px;align-items:flex-start;}
+  .contact-list .icon{
+    flex:none;width:38px;height:38px;border-radius:50%;
+    background:var(--navy);color:var(--gold-light);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .contact-list .icon svg{width:18px;height:18px;}
+  .contact-list .label{font-size:0.78rem;color:var(--steel);letter-spacing:0.04em;}
+  .contact-list .val{font-weight:500;color:var(--ink);margin-top:2px;}
+  .contact-list .val a{text-decoration:none;color:inherit;}
+  .contact-list .val a:hover{color:var(--gold);}
+
+  .quoteform{
+    background:var(--cream);
+    border:1px solid var(--line);
+    padding:32px;
+  }
+  .quoteform h3{font-size:1.3rem;}
+  .quoteform .sub{color:var(--steel);margin-top:6px;font-size:0.95rem;}
+  .field{margin-top:18px;}
+  .field label{display:block;font-size:0.85rem;font-weight:500;color:var(--navy);margin-bottom:6px;}
+  :root[data-theme="dark"] .field label, :root:not([data-theme="light"]) .field label{color:var(--gold-light);}
+  .field input, .field textarea{
+    width:100%;padding:12px 14px;
+    border:1px solid var(--line);
+    background:var(--paper);
+    color:var(--ink);
+    font-family:inherit;font-size:0.95rem;
+    border-radius:var(--radius);
+  }
+  .field textarea{min-height:110px;resize:vertical;}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .quoteform .btn{margin-top:22px;width:100%;}
+  .formnote{margin-top:12px;font-size:0.8rem;color:var(--steel);}
+
+  /* ---------- Footer ---------- */
+  footer{background:var(--navy-dark);color:#C9CFDA;border-top:3px solid var(--gold);}
+  footer .wrap{
+    padding:52px 28px 30px;
+    display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:40px;
+  }
+  footer .fbrand{display:flex;align-items:center;gap:12px;}
+  footer .fbrand .plate{background:var(--paper);padding:6px 10px;border-radius:var(--radius);}
+  footer .fbrand img{height:26px;}
+  footer p.tag{margin-top:14px;color:#8E97A8;font-size:0.9rem;max-width:34ch;}
+  footer h4{color:#F1EEE3;font-size:0.85rem;letter-spacing:0.08em;margin-bottom:14px;}
+  footer ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;}
+  footer a{color:#C9CFDA;text-decoration:none;font-size:0.92rem;}
+  footer a:hover{color:var(--gold-light);}
+  .subfoot{
+    border-top:1px solid rgba(255,255,255,0.1);
+    padding:20px 28px;
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
+    font-size:0.82rem;color:#7C859A;
+    max-width:var(--maxw);margin:0 auto;
+  }
+
+  /* ---------- Mobile ---------- */
+  @media (max-width:980px){
+    nav.mainnav, .navcta .phonelink, .navcta .btn-gold{display:none;}
+    .hamburger{display:inline-flex;}
+    .hero .wrap{grid-template-columns:1fr;gap:40px;padding-bottom:48px;}
+    .hero-figure img{height:280px;}
+    .specstrip .wrap{grid-template-columns:1fr 1fr;}
+    .specitem:nth-child(3){border-left:none;}
+    .specitem{border-left:1px solid rgba(255,255,255,0.12);}
+    .specitem:nth-child(1),.specitem:nth-child(3){border-left:none;}
+    .about .wrap, .why .wrap, .contact .wrap{grid-template-columns:1fr;gap:40px;}
+    .why-photos{height:320px;order:2;}
+    .svc-row{grid-template-columns:56px 1fr;grid-template-areas:"code name" ". desc";}
+    .svc-row .code{grid-area:code;}
+    .svc-row .name{grid-area:name;}
+    .svc-row .desc{grid-area:desc;}
+    .gallery{grid-template-columns:repeat(2,1fr);}
+    footer .wrap{grid-template-columns:1fr;gap:30px;}
+    .row2{grid-template-columns:1fr;}
+  }
+  @media (max-width:560px){
+    .wrap{padding:0 20px;}
+    .kicker{font-size:1.5rem;}
+    section{padding:60px 0;}
+  }
+
+  .mobnav{
+    display:none;position:fixed;inset:0;z-index:60;
+    background:var(--navy-dark);
+    padding:26px;
+    flex-direction:column;
+  }
+  .mobnav.open{display:flex;}
+  .mobnav .mobtop{display:flex;justify-content:space-between;align-items:center;}
+  .mobnav a{color:#EFEAE0;text-decoration:none;font-family:"Oswald",sans-serif;font-size:1.5rem;padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.1);}
+  .mobnav .btn{margin-top:26px;}
+</style>
+</head>
+<body>
+
+<a href="#main" class="sr-only" style="position:absolute;left:-9999px;">Skip to content</a>
+
+<header class="topbar">
+  <div class="wrap">
+    <a href="#main" class="brand">
+      <span class="plate"><img src="images/logo.jpg" alt="Pime Engineering logo"></span>
+    </a>
+    <nav class="mainnav" aria-label="Primary">
+      <a href="#about">About</a>
+      <a href="#services">Services</a>
+      <a href="#work">Our Work</a>
+      <a href="#why">Why Us</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <div class="navcta">
+      <a class="phonelink" href="tel:+27759097129">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        075 909 7129
+      </a>
+      <a class="btn btn-gold" href="#contact">Request a quote</a>
+      <button class="hamburger" id="hamOpen" aria-label="Open menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="mobnav" id="mobnav">
+  <div class="mobtop">
+    <span class="plate" style="background:var(--paper);padding:6px 10px;"><img src="images/logo.jpg" alt="Pime Engineering" style="height:26px;"></span>
+    <button class="hamburger" id="hamClose" aria-label="Close menu" style="color:#EFEAE0;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <a href="#about">About</a>
+  <a href="#services">Services</a>
+  <a href="#work">Our Work</a>
+  <a href="#why">Why Us</a>
+  <a href="#contact">Contact</a>
+  <a class="btn btn-gold" href="#contact">Request a quote</a>
+</div>
+
+<main id="main">
+
+  <section class="hero">
+    <div class="wrap">
+      <div>
+        <h1>Machined to hold its tolerance, built to keep running.</h1>
+        <p class="lede">Pime Engineering is a precision mechanical engineering workshop in Benoni, Gauteng — machining, fabrication and welding, mechanical installation, plant maintenance and equipment repairs, all done in-house.</p>
+        <div class="ctas">
+          <a class="btn btn-gold" href="#contact">Request a quote</a>
+          <a class="btn btn-ink" href="tel:+27759097129">Call 075 909 7129</a>
+        </div>
+      </div>
+      <div class="hero-figure">
+        <div class="frame">
+          <img src="images/img-004.jpg" alt="Machined crown wheel and pinion gear set">
+          <span class="corner tl"></span>
+          <span class="corner br"></span>
+        </div>
+        <span class="tag">Cut to close tolerance, in-house</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="specstrip">
+    <div class="wrap">
+      <div class="specitem">
+        <div class="label">LOCATION</div>
+        <div class="value">Benoni, Gauteng</div>
+      </div>
+      <div class="specitem">
+        <div class="label">CAPABILITY</div>
+        <div class="value">Full in-house machining</div>
+      </div>
+      <div class="specitem">
+        <div class="label">REG. NO.</div>
+        <div class="value">2025/851240/07</div>
+      </div>
+      <div class="specitem">
+        <div class="label">CONTACT</div>
+        <div class="value"><a href="tel:+27759097129">075 909 7129</a></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="about" class="about">
+    <div class="wrap">
+      <div class="about-copy">
+        <div class="kicker">About Us</div>
+        <p>Pime Engineering is a precision mechanical engineering company based in Benoni, Gauteng. We specialise in precision machining, metal fabrication and welding, mechanical installation, plant maintenance, and equipment repairs for clients across a range of industrial sectors.</p>
+        <p>Guided by our motto — precision, quality, reliability — we combine hands-on workshop expertise with careful attention to tolerance, finish, and turnaround time, delivering components and services that keep our clients' plants and equipment running.</p>
+        <div class="mission">
+          <div class="label">Our Mission</div>
+          <p>To deliver precise, high-quality mechanical engineering solutions — from custom-machined components to plant maintenance and equipment repairs — that our clients can rely on, every time.</p>
+        </div>
+      </div>
+      <div class="about-figure">
+        <img src="images/img-014.jpg" alt="Precision lathe work in progress in the Pime Engineering workshop">
+        <span class="corner tl"></span>
+        <span class="corner br"></span>
+      </div>
+    </div>
+  </section>
+
+  <section id="services" class="services">
+    <div class="wrap">
+      <div class="kicker">Specialised Services</div>
+      <p class="section-intro">Six disciplines, one workshop — every job moves between them without leaving our floor.</p>
+      <div class="svc-list">
+        <div class="svc-row">
+          <div class="code">PE&nbsp;01</div>
+          <div class="name">Mechanical Engineering</div>
+          <div class="desc">General mechanical engineering work spanning shafts, gearing, pump components and structural parts.</div>
+        </div>
+        <div class="svc-row">
+          <div class="code">PE&nbsp;02</div>
+          <div class="name">Metal Fabrication &amp; Welding</div>
+          <div class="desc">Structural fabrication and welding to suit custom brackets, housings and on-site repairs.</div>
+        </div>
+        <div class="svc-row">
+          <div class="code">PE&nbsp;03</div>
+          <div class="name">Mechanical Installation</div>
+          <div class="desc">On-site installation of mechanical equipment and components, fitted to spec.</div>
+        </div>
+        <div class="svc-row">
+          <div class="code">PE&nbsp;04</div>
+          <div class="name">Precision Machining</div>
+          <div class="desc">Turning, milling and boring held to close tolerance — from small shafts to large housings.</div>
+        </div>
+        <div class="svc-row">
+          <div class="code">PE&nbsp;05</div>
+          <div class="name">Plant Maintenance</div>
+          <div class="desc">Scheduled and breakdown maintenance that keeps plant and equipment running.</div>
+        </div>
+        <div class="svc-row">
+          <div class="code">PE&nbsp;06</div>
+          <div class="name">Equipment Repairs</div>
+          <div class="desc">Reconditioning and repair of pumps, gearboxes and other mechanical equipment.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="why" class="why">
+    <div class="wrap">
+      <div class="why-photos">
+        <img class="p1" src="images/img-041.jpg" alt="Vertical spindle pump built by Pime Engineering">
+        <img class="p2" src="images/img-021.jpg" alt="Hydraulic cylinder barrels with clevis linkages">
+      </div>
+      <div>
+        <div class="kicker">Why Choose Us</div>
+        <div class="why-grid" style="margin-top:32px;">
+          <div class="why-item">
+            <div class="num">01</div>
+            <h3>Precision Workmanship</h3>
+            <p>From custom shafts to large housings and impeller components, every job is held to close tolerance.</p>
+          </div>
+          <div class="why-item">
+            <div class="num">02</div>
+            <h3>Broad Experience</h3>
+            <p>Practical experience across shafts, pump components, hydraulic parts, and structural fabrication.</p>
+          </div>
+          <div class="why-item">
+            <div class="num">03</div>
+            <h3>In-House Machining</h3>
+            <p>Full in-house capability means faster turnaround and tighter quality control.</p>
+          </div>
+          <div class="why-item">
+            <div class="num">04</div>
+            <h3>Reliable Service</h3>
+            <p>Quality-driven service from quotation through to completion, every time.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="work" class="work">
+    <div class="wrap">
+      <div class="work-head">
+        <div>
+          <div class="kicker">Our Work</div>
+          <p class="section-intro">A selection of components machined and fabricated in our workshop.</p>
+        </div>
+      </div>
+      <div class="filters" id="filters">
+        <button class="filt active" data-cat="all">All work</button>
+<button class="filt" data-cat="gears">Shafts &amp; Gears</button>
+<button class="filt" data-cat="pumps">Pumps &amp; Impellers</button>
+<button class="filt" data-cat="hydraulics">Hydraulics</button>
+<button class="filt" data-cat="conveyor">Conveyor &amp; Pulleys</button>
+      </div>
+      <div class="gallery" id="gallery">
+        <figure class="shot" data-cat="gears"><img loading="lazy" src="images/img-001.jpg" alt="Precision-machined shafts"><figcaption>Precision-machined shafts</figcaption></figure>
+<figure class="shot" data-cat="gears"><img loading="lazy" src="images/img-002.jpg" alt="Brass gear and threaded bushing components"><figcaption>Brass gear and threaded bushing components</figcaption></figure>
+<figure class="shot" data-cat="gears"><img loading="lazy" src="images/img-003.jpg" alt="Large steel gear"><figcaption>Large steel gear</figcaption></figure>
+<figure class="shot" data-cat="gears"><img loading="lazy" src="images/img-004.jpg" alt="Crown wheel and pinion gear set"><figcaption>Crown wheel and pinion gear set</figcaption></figure>
+<figure class="shot" data-cat="gears"><img loading="lazy" src="images/img-005.jpg" alt="Machined bevel gear component"><figcaption>Machined bevel gear component</figcaption></figure>
+<figure class="shot" data-cat="pumps"><img loading="lazy" src="images/img-006.jpg" alt="Balanced impellers / fan wheels"><figcaption>Balanced impellers / fan wheels</figcaption></figure>
+<figure class="shot" data-cat="pumps"><img loading="lazy" src="images/img-007.jpg" alt="Reconditioned pump impeller"><figcaption>Reconditioned pump impeller</figcaption></figure>
+<figure class="shot" data-cat="pumps"><img loading="lazy" src="images/img-008.jpg" alt="Impeller undergoing machining"><figcaption>Impeller undergoing machining</figcaption></figure>
+<figure class="shot" data-cat="gears"><img loading="lazy" src="images/img-009.jpg" alt="Threaded shaft with keyway"><figcaption>Threaded shaft with keyway</figcaption></figure>
+<figure class="shot" data-cat="gears"><img loading="lazy" src="images/img-010.jpg" alt="Splined shaft with keyway"><figcaption>Splined shaft with keyway</figcaption></figure>
+<figure class="shot" data-cat="pumps"><img loading="lazy" src="images/img-011.jpg" alt="Pump housing component"><figcaption>Pump housing component</figcaption></figure>
+<figure class="shot" data-cat="conveyor"><img loading="lazy" src="images/img-012.jpg" alt="Machined pulley and bushing sets"><figcaption>Machined pulley and bushing sets</figcaption></figure>
+<figure class="shot" data-cat="gears"><img loading="lazy" src="images/img-013.jpg" alt="Machined ring / flange"><figcaption>Machined ring / flange</figcaption></figure>
+<figure class="shot" data-cat="gears"><img loading="lazy" src="images/img-014.jpg" alt="Precision lathe work in progress"><figcaption>Precision lathe work in progress</figcaption></figure>
+<figure class="shot" data-cat="gears"><img loading="lazy" src="images/img-015.jpg" alt="Machined clevis / eye-mount blocks"><figcaption>Machined clevis / eye-mount blocks</figcaption></figure>
+<figure class="shot" data-cat="gears"><img loading="lazy" src="images/img-016.jpg" alt="Polished cylindrical rods"><figcaption>Polished cylindrical rods</figcaption></figure>
+<figure class="shot" data-cat="gears"><img loading="lazy" src="images/img-017.jpg" alt="Finished shafts and tie rods"><figcaption>Finished shafts and tie rods</figcaption></figure>
+<figure class="shot" data-cat="hydraulics"><img loading="lazy" src="images/img-018.jpg" alt="Hydraulic cylinder rod on fabrication stand"><figcaption>Hydraulic cylinder rod on fabrication stand</figcaption></figure>
+<figure class="shot" data-cat="gears"><img loading="lazy" src="images/img-019.jpg" alt="Stacked machined flange rings"><figcaption>Stacked machined flange rings</figcaption></figure>
+<figure class="shot" data-cat="gears"><img loading="lazy" src="images/img-020.jpg" alt="Machined eye-bolt assemblies"><figcaption>Machined eye-bolt assemblies</figcaption></figure>
+<figure class="shot" data-cat="hydraulics"><img loading="lazy" src="images/img-021.jpg" alt="Hydraulic cylinder barrels with clevis linkages"><figcaption>Hydraulic cylinder barrels with clevis linkages</figcaption></figure>
+<figure class="shot" data-cat="gears"><img loading="lazy" src="images/img-022.jpg" alt="Machined hub / flange housings"><figcaption>Machined hub / flange housings</figcaption></figure>
+<figure class="shot" data-cat="hydraulics"><img loading="lazy" src="images/img-023.jpg" alt="Hydraulic rams with clevis fittings"><figcaption>Hydraulic rams with clevis fittings</figcaption></figure>
+<figure class="shot" data-cat="hydraulics"><img loading="lazy" src="images/img-024.jpg" alt="Hydraulic rams, alternate view"><figcaption>Hydraulic rams, alternate view</figcaption></figure>
+<figure class="shot" data-cat="hydraulics"><img loading="lazy" src="images/img-025.jpg" alt="Hydraulic cylinder assemblies"><figcaption>Hydraulic cylinder assemblies</figcaption></figure>
+<figure class="shot" data-cat="hydraulics"><img loading="lazy" src="images/img-026.jpg" alt="Finished cylinder units, packed for delivery"><figcaption>Finished cylinder units, packed for delivery</figcaption></figure>
+<figure class="shot" data-cat="gears"><img loading="lazy" src="images/img-027.jpg" alt="Machined sleeve / bore component"><figcaption>Machined sleeve / bore component</figcaption></figure>
+<figure class="shot" data-cat="gears"><img loading="lazy" src="images/img-028.jpg" alt="Machined bushing / sleeve with keyway"><figcaption>Machined bushing / sleeve with keyway</figcaption></figure>
+<figure class="shot" data-cat="gears"><img loading="lazy" src="images/img-029.jpg" alt="Batch of threaded collar / bushing components"><figcaption>Batch of threaded collar / bushing components</figcaption></figure>
+<figure class="shot" data-cat="gears"><img loading="lazy" src="images/img-030.jpg" alt="Racked threaded bushings and end caps"><figcaption>Racked threaded bushings and end caps</figcaption></figure>
+<figure class="shot" data-cat="hydraulics"><img loading="lazy" src="images/img-031.jpg" alt="Hydraulic cylinder rods"><figcaption>Hydraulic cylinder rods</figcaption></figure>
+<figure class="shot" data-cat="pumps"><img loading="lazy" src="images/img-032.jpg" alt="Submersible pumps"><figcaption>Submersible pumps</figcaption></figure>
+<figure class="shot" data-cat="conveyor"><img loading="lazy" src="images/img-033.jpg" alt="Conveyor pulley repair and manufacture"><figcaption>Conveyor pulley repair and manufacture</figcaption></figure>
+<figure class="shot" data-cat="conveyor"><img loading="lazy" src="images/img-034.jpg" alt="Conveyor pulley repair and manufacture"><figcaption>Conveyor pulley repair and manufacture</figcaption></figure>
+<figure class="shot" data-cat="conveyor"><img loading="lazy" src="images/img-035.jpg" alt="Conveyor pulley repair and manufacture"><figcaption>Conveyor pulley repair and manufacture</figcaption></figure>
+<figure class="shot" data-cat="conveyor"><img loading="lazy" src="images/img-036.jpg" alt="Conveyor pulley repair and manufacture"><figcaption>Conveyor pulley repair and manufacture</figcaption></figure>
+<figure class="shot" data-cat="conveyor"><img loading="lazy" src="images/img-037.jpg" alt="Magnetic pulleys"><figcaption>Magnetic pulleys</figcaption></figure>
+<figure class="shot" data-cat="gears"><img loading="lazy" src="images/img-038.jpg" alt="Gears"><figcaption>Gears</figcaption></figure>
+<figure class="shot" data-cat="pumps"><img loading="lazy" src="images/img-039.jpg" alt="C5 pump"><figcaption>C5 pump</figcaption></figure>
+<figure class="shot" data-cat="pumps"><img loading="lazy" src="images/img-040.jpg" alt="RNE pump"><figcaption>RNE pump</figcaption></figure>
+<figure class="shot" data-cat="pumps"><img loading="lazy" src="images/img-041.jpg" alt="Vertical spindle pump"><figcaption>Vertical spindle pump</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="contact">
+    <div class="wrap">
+      <div>
+        <div class="kicker">Contact Us</div>
+        <p class="section-intro">We welcome the opportunity to quote on your next mechanical engineering project.</p>
+        <div class="contact-list">
+          <div class="row">
+            <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
+            <div>
+              <div class="label">Address</div>
+              <div class="val">11b Liverpool Road, Benoni, 1501<br><a href="https://www.google.com/maps/search/?api=1&query=11b+Liverpool+Road%2C+Benoni%2C+1501" target="_blank" rel="noopener">Get directions →</a></div>
+            </div>
+          </div>
+          <div class="row">
+            <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>
+            <div>
+              <div class="label">Phone &amp; WhatsApp</div>
+              <div class="val"><a href="tel:+27759097129">075 909 7129</a> &nbsp;·&nbsp; <a href="https://wa.me/27759097129" target="_blank" rel="noopener">WhatsApp</a></div>
+            </div>
+          </div>
+          <div class="row">
+            <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><path d="M22 6l-10 7L2 6"/></svg></span>
+            <div>
+              <div class="label">Email</div>
+              <div class="val"><a href="mailto:info@pimeengineering.co.za">info@pimeengineering.co.za</a></div>
+            </div>
+          </div>
+          <div class="row">
+            <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="1"/><path d="M8 2v4M16 2v4M3 10h18"/></svg></span>
+            <div>
+              <div class="label">Company Reg. No.</div>
+              <div class="val">2025/851240/07</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <form class="quoteform" id="quoteform">
+        <h3>Request a quote</h3>
+        <p class="sub">Tell us about the job — component, quantity, drawings if you have them — and we'll get back to you.</p>
+        <div class="row2">
+          <div class="field">
+            <label for="qname">Name</label>
+            <input id="qname" name="name" type="text" required>
+          </div>
+          <div class="field">
+            <label for="qphone">Phone</label>
+            <input id="qphone" name="phone" type="tel">
+          </div>
+        </div>
+        <div class="field">
+          <label for="qemail">Email</label>
+          <input id="qemail" name="email" type="email" required>
+        </div>
+        <div class="field">
+          <label for="qdetails">Project details</label>
+          <textarea id="qdetails" name="details" required placeholder="What do you need machined, fabricated or repaired?"></textarea>
+        </div>
+        <button type="submit" class="btn btn-gold">Send via email</button>
+        <p class="formnote">Opens your email app with the details filled in, addressed to info@pimeengineering.co.za.</p>
+      </form>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <div class="fbrand">
+        <span class="plate"><img src="images/logo.jpg" alt="Pime Engineering"></span>
+      </div>
+      <p class="tag">Precision mechanical engineering — machining, fabrication and plant maintenance for industrial clients across Gauteng.</p>
+    </div>
+    <div>
+      <h4>NAVIGATE</h4>
+      <ul>
+        <li><a href="#about">About</a></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#work">Our Work</a></li>
+        <li><a href="#why">Why Us</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>GET IN TOUCH</h4>
+      <ul>
+        <li>11b Liverpool Road, Benoni, 1501</li>
+        <li><a href="tel:+27759097129">075 909 7129</a></li>
+        <li><a href="mailto:info@pimeengineering.co.za">info@pimeengineering.co.za</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="subfoot">
+    <span>© 2026 Pime Engineering. All rights reserved.</span>
+    <span>Company Reg. No. 2025/851240/07</span>
+  </div>
+</footer>
+
+<div class="lightbox" id="lightbox">
+  <button class="lb-close" id="lbClose" aria-label="Close">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+  <button class="lb-prev" id="lbPrev" aria-label="Previous">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+  </button>
+  <button class="lb-next" id="lbNext" aria-label="Next">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+  </button>
+  <div>
+    <img id="lbImg" src="" alt="">
+    <div class="lb-cap" id="lbCap"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  // Mobile nav
+  var mobnav = document.getElementById('mobnav');
+  document.getElementById('hamOpen').addEventListener('click', function(){ mobnav.classList.add('open'); });
+  document.getElementById('hamClose').addEventListener('click', function(){ mobnav.classList.remove('open'); });
+  mobnav.querySelectorAll('a').forEach(function(a){
+    a.addEventListener('click', function(){ mobnav.classList.remove('open'); });
+  });
+
+  // Gallery filter
+  var filts = document.querySelectorAll('.filt');
+  var shots = document.querySelectorAll('.shot');
+  filts.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      filts.forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      var cat = btn.getAttribute('data-cat');
+      shots.forEach(function(s){
+        if(cat === 'all' || s.getAttribute('data-cat') === cat){
+          s.classList.remove('hide');
+        } else {
+          s.classList.add('hide');
+        }
+      });
+    });
+  });
+
+  // Lightbox
+  var lb = document.getElementById('lightbox');
+  var lbImg = document.getElementById('lbImg');
+  var lbCap = document.getElementById('lbCap');
+  var shotArr = Array.prototype.slice.call(shots);
+  var current = 0;
+
+  function openAt(i){
+    var visible = shotArr.filter(function(s){ return !s.classList.contains('hide'); });
+    if(visible.length === 0) return;
+    current = i;
+    var s = visible[((current % visible.length) + visible.length) % visible.length];
+    var img = s.querySelector('img');
+    lbImg.src = img.src;
+    lbImg.alt = img.alt;
+    lbCap.textContent = img.alt;
+    lb.classList.add('open');
+    lb._visible = visible;
+  }
+  shotArr.forEach(function(s, i){
+    s.addEventListener('click', function(){
+      var visible = shotArr.filter(function(x){ return !x.classList.contains('hide'); });
+      var idx = visible.indexOf(s);
+      current = idx;
+      lb._visible = visible;
+      openAt(idx);
+    });
+  });
+  function closeLb(){ lb.classList.remove('open'); }
+  document.getElementById('lbClose').addEventListener('click', closeLb);
+  lb.addEventListener('click', function(e){ if(e.target === lb) closeLb(); });
+  document.getElementById('lbPrev').addEventListener('click', function(){
+    var visible = lb._visible || shotArr;
+    current = (current - 1 + visible.length) % visible.length;
+    var s = visible[current];
+    lbImg.src = s.querySelector('img').src;
+    lbCap.textContent = s.querySelector('img').alt;
+  });
+  document.getElementById('lbNext').addEventListener('click', function(){
+    var visible = lb._visible || shotArr;
+    current = (current + 1) % visible.length;
+    var s = visible[current];
+    lbImg.src = s.querySelector('img').src;
+    lbCap.textContent = s.querySelector('img').alt;
+  });
+  document.addEventListener('keydown', function(e){
+    if(!lb.classList.contains('open')) return;
+    if(e.key === 'Escape') closeLb();
+    if(e.key === 'ArrowLeft') document.getElementById('lbPrev').click();
+    if(e.key === 'ArrowRight') document.getElementById('lbNext').click();
+  });
+
+  // Quote form -> mailto
+  document.getElementById('quoteform').addEventListener('submit', function(e){
+    e.preventDefault();
+    var name = document.getElementById('qname').value;
+    var phone = document.getElementById('qphone').value;
+    var email = document.getElementById('qemail').value;
+    var details = document.getElementById('qdetails').value;
+    var subject = encodeURIComponent('Quote request — ' + name);
+    var body = encodeURIComponent(
+      'Name: ' + name + '\n' +
+      'Phone: ' + phone + '\n' +
+      'Email: ' + email + '\n\n' +
+      'Project details:\n' + details
+    );
+    window.location.href = 'mailto:info@pimeengineering.co.za?subject=' + subject + '&body=' + body;
+  });
+})();
+</script>
+
+</body>
+</html>

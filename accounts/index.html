@@ -1,0 +1,1334 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pime Engineering — Accounts</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta name="robots" content="noindex, nofollow">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+  :root{
+    --navy:#1B3358; --navy-dark:#0F1E33;
+    --gold:#B3872C; --gold-light:#D9A94A;
+    --cream:#F6F2E7; --paper:#FFFDF8; --ink:#1D2128; --steel:#5C6672; --line:#E2DAC4;
+    --green:#3F7A4A; --red:#B5442E;
+    color-scheme: light;
+  }
+  *{box-sizing:border-box;}
+  :root{ padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px); }
+  html{ scroll-padding-top:env(safe-area-inset-top,0px); }
+  body{margin:0;background:var(--cream);color:var(--ink);font-family:"IBM Plex Sans",sans-serif;font-size:15px;line-height:1.55;}
+  h1,h2,h3,h4{font-family:"Oswald",sans-serif;font-weight:600;margin:0;color:var(--navy);}
+  a{color:inherit;}
+  button, input, select, textarea{font-family:inherit;font-size:0.95rem;}
+  button{cursor:pointer;}
+  table{border-collapse:collapse;width:100%;}
+  :focus-visible{outline:3px solid var(--gold-light);outline-offset:2px;}
+  @media (prefers-reduced-motion: reduce){ *{transition-duration:.001ms !important; animation-duration:.001ms !important;} }
+
+  #app{display:flex;min-height:100vh;}
+
+  /* ---------- Sidebar ---------- */
+  .sidebar{
+    width:230px;flex:none;background:var(--navy-dark);color:#E9E3D2;
+    padding:20px 14px;display:flex;flex-direction:column;gap:2px;
+    position:sticky;top:0;height:100vh;overflow-y:auto;
+  }
+  .sidebar .brand{display:flex;align-items:center;gap:10px;padding:6px 8px 18px;}
+  .sidebar .brand img{height:26px;border-radius:2px;}
+  .sidebar .brand .t{font-family:"Oswald",sans-serif;font-size:0.98rem;color:#fff;font-weight:600;line-height:1.15;}
+  .sidebar .brand .t small{display:block;color:var(--gold-light);font-size:0.68rem;font-weight:500;letter-spacing:.06em;}
+  .navgroup{margin-top:14px;}
+  .navgroup .lbl{font-size:0.68rem;letter-spacing:.1em;color:#7C859A;padding:0 10px;margin-bottom:6px;}
+  .navlink{
+    display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:4px;
+    color:#CBD2DF;text-decoration:none;font-size:0.88rem;font-weight:500;
+  }
+  .navlink:hover{background:rgba(255,255,255,0.06);color:#fff;}
+  .navlink.active{background:var(--gold);color:#241B08;}
+  .navlink .dot{width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.5;flex:none;}
+
+  /* ---------- Main ---------- */
+  .main{flex:1;min-width:0;padding:30px 36px 80px;max-width:1100px;}
+  .pagehead{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:14px;margin-bottom:26px;}
+  .pagehead h1{font-size:1.7rem;}
+  .pagehead .sub{color:var(--steel);margin-top:4px;font-size:0.92rem;}
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:4px;padding:22px;margin-bottom:20px;}
+  .card h3{font-size:1.05rem;margin-bottom:14px;}
+  .btn{
+    display:inline-flex;align-items:center;gap:7px;padding:10px 18px;border-radius:3px;font-weight:600;
+    font-size:0.9rem;border:1.5px solid transparent;background:var(--navy);color:#fff;text-decoration:none;
+  }
+  .btn:hover{background:#24406C;}
+  .btn-gold{background:var(--gold);color:#241B08;}
+  .btn-gold:hover{background:var(--gold-light);}
+  .btn-ghost{background:transparent;border-color:var(--line);color:var(--ink);}
+  .btn-ghost:hover{border-color:var(--navy);}
+  .btn-sm{padding:6px 12px;font-size:0.8rem;}
+  .btn:disabled{opacity:.5;cursor:not-allowed;}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+  .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+  @media (max-width:760px){ #app{flex-direction:column;} .grid2,.grid3,.grid4{grid-template-columns:1fr;} .main{padding:22px 16px 70px;} .sidebar{position:fixed;top:0;left:-240px;bottom:0;z-index:50;transition:left .2s ease;} .sidebar.open{left:0;} .mobtop{display:flex !important;} }
+
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:0.8rem;font-weight:600;color:var(--navy);margin-bottom:5px;}
+  .field .hint{font-size:0.76rem;color:var(--steel);margin-top:4px;}
+  .field input, .field select, .field textarea{
+    width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:3px;background:#fff;color:var(--ink);
+  }
+  .field textarea{min-height:70px;resize:vertical;}
+  .inline{display:flex;gap:10px;align-items:center;}
+  .lineitems{border:1px solid var(--line);border-radius:4px;overflow:hidden;margin-bottom:8px;}
+  .lineitems table{font-size:0.87rem;}
+  .lineitems th{background:var(--cream);text-align:left;padding:8px 10px;font-size:0.72rem;letter-spacing:.05em;color:var(--steel);border-bottom:1px solid var(--line);}
+  .lineitems td{padding:6px 8px;border-bottom:1px solid var(--line);}
+  .lineitems input{border:1px solid transparent;background:transparent;padding:5px 6px;}
+  .lineitems input:hover, .lineitems input:focus{border-color:var(--line);background:#fff;}
+  .lineitems .rm{color:var(--red);background:none;border:none;font-size:1.1rem;padding:2px 6px;}
+
+  .statcards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:26px;}
+  .statcard{background:var(--navy);color:#fff;border-radius:4px;padding:16px 18px;}
+  .statcard .l{font-size:0.72rem;letter-spacing:.08em;color:var(--gold-light);}
+  .statcard .v{font-family:"Oswald",sans-serif;font-size:1.5rem;margin-top:5px;}
+  @media (max-width:900px){ .statcards{grid-template-columns:1fr 1fr;} }
+
+  table.list{width:100%;font-size:0.9rem;}
+  table.list th{text-align:left;padding:9px 10px;font-size:0.74rem;letter-spacing:.05em;color:var(--steel);border-bottom:2px solid var(--line);}
+  table.list td{padding:9px 10px;border-bottom:1px solid var(--line);}
+  table.list tr:hover td{background:rgba(179,135,44,0.06);}
+  .badge{display:inline-block;padding:3px 9px;border-radius:99px;font-size:0.72rem;font-weight:600;}
+  .badge.paid{background:#E4F0E5;color:var(--green);}
+  .badge.unpaid{background:#F7E6E2;color:var(--red);}
+  .badge.partial{background:#FBEFDA;color:var(--gold);}
+  .num{text-align:right;font-variant-numeric:tabular-nums;}
+  .muted{color:var(--steel);}
+  .small{font-size:0.8rem;}
+
+  .note{background:#FBF7EC;border-left:3px solid var(--gold);padding:10px 14px;font-size:0.84rem;color:#5A4A22;border-radius:0 3px 3px 0;}
+
+  /* T-account */
+  .taccount{border:1px solid var(--navy);border-radius:4px;margin-bottom:26px;overflow:hidden;}
+  .taccount .hd{background:var(--navy);color:#fff;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;}
+  .taccount .hd .code{color:var(--gold-light);font-size:0.8rem;margin-right:8px;}
+  .tgrid{display:grid;grid-template-columns:1fr 1fr;}
+  .tgrid > div{padding:0;}
+  .tgrid .col-h{padding:7px 12px;font-size:0.72rem;letter-spacing:.06em;color:var(--steel);background:var(--cream);border-bottom:1px solid var(--line);}
+  .tgrid .col-l{border-right:1.5px solid var(--navy);}
+  .trow{display:flex;justify-content:space-between;gap:8px;padding:7px 12px;font-size:0.83rem;border-bottom:1px dashed var(--line);}
+  .trow .d{color:var(--steel);font-size:0.74rem;}
+  .tfoot{display:flex;justify-content:space-between;padding:8px 12px;font-weight:700;background:var(--cream);font-size:0.85rem;}
+  .tbalance{padding:9px 14px;font-size:0.85rem;background:#fff;border-top:1px solid var(--line);}
+
+  .statement-table td, .statement-table th{padding:8px 4px;}
+  .statement-table .indent{padding-left:18px;}
+  .statement-table .total-row td{border-top:2px solid var(--navy);font-weight:700;}
+  .statement-table .section-row td{font-weight:700;color:var(--navy);padding-top:16px;}
+
+  .balcheck{display:inline-flex;align-items:center;gap:6px;font-weight:600;font-size:0.85rem;padding:5px 12px;border-radius:99px;}
+  .balcheck.ok{background:#E4F0E5;color:var(--green);}
+  .balcheck.bad{background:#F7E6E2;color:var(--red);}
+
+  .doc-view{background:#fff;border:1px solid var(--line);max-width:720px;padding:0;}
+  .doc-inner{padding:40px;}
+  .doc-top{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid var(--gold);padding-bottom:20px;margin-bottom:24px;}
+  .doc-top img{height:38px;}
+  .doc-top .doctype{text-align:right;}
+  .doc-top .doctype h2{font-size:1.5rem;color:var(--navy);}
+  .doc-top .doctype .num{font-size:0.95rem;color:var(--gold);font-weight:600;text-align:right;}
+  .doc-meta{display:flex;justify-content:space-between;margin-bottom:26px;font-size:0.88rem;}
+  .doc-meta .lbl{font-size:0.72rem;letter-spacing:.06em;color:var(--steel);margin-bottom:3px;}
+  .doc-table{width:100%;font-size:0.9rem;margin-bottom:20px;}
+  .doc-table th{text-align:left;border-bottom:2px solid var(--navy);padding:8px 6px;font-size:0.76rem;color:var(--navy);}
+  .doc-table td{padding:8px 6px;border-bottom:1px solid var(--line);}
+  .doc-totals{margin-left:auto;width:260px;font-size:0.92rem;}
+  .doc-totals .r{display:flex;justify-content:space-between;padding:5px 0;}
+  .doc-totals .r.total{border-top:2px solid var(--navy);font-weight:700;font-size:1.05rem;padding-top:8px;margin-top:4px;}
+  .doc-foot{margin-top:32px;padding-top:16px;border-top:1px solid var(--line);font-size:0.8rem;color:var(--steel);}
+  .doc-actions{padding:16px 40px;background:var(--cream);border-top:1px solid var(--line);display:flex;gap:10px;}
+
+  @media print{
+    .sidebar, .doc-actions, .pagehead, .mobtop{display:none !important;}
+    .main{padding:0;max-width:none;}
+    .doc-view{border:none;max-width:none;}
+    body{background:#fff;}
+  }
+
+  .mobtop{display:none;position:sticky;top:0;z-index:40;background:var(--navy-dark);color:#fff;padding:12px 16px;align-items:center;justify-content:space-between;}
+  .mobtop button{background:none;border:none;color:#fff;}
+
+  .emptystate{padding:40px 20px;text-align:center;color:var(--steel);}
+  .setup-gate{max-width:560px;margin:60px auto;}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ============================== CONFIG ============================== */
+  // Fill these in after creating your Supabase project (Project Settings ->
+  // API). The anon key is safe to expose client-side — it's designed for
+  // this; access is actually controlled by the Row Level Security policies
+  // in supabase/migrations/0001_init.sql, plus the login gate below.
+  var SUPABASE_URL = "https://rkyxzgkakiipagrznpsw.supabase.co";
+  var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJreXh6Z2tha2lpcGFncnpucHN3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAxOTczMzAsImV4cCI6MjEwNTc3MzMzMH0.ASZXz153t4hlXcMDOOkFtdSikYQVFcQTsOGlzF-3Thc";
+
+  var sb = (SUPABASE_URL.indexOf("YOUR-PROJECT-REF") === -1)
+    ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+    : null;
+
+  /* ============================== CONSTANTS ============================== */
+  var LOGO = "../images/logo.jpg";
+  var COMPANY = {
+    name: "Pime Engineering",
+    address: "11b Liverpool Road, Benoni, 1501",
+    phone: "075 909 7129",
+    email: "info@pimeengineering.co.za",
+    reg: "2025/851240/07"
+  };
+
+  var CHART = {
+    "1000": {name:"Bank", type:"asset"},
+    "1100": {name:"Accounts Receivable", type:"asset"},
+    "2000": {name:"Accounts Payable", type:"liability"},
+    "2100": {name:"VAT Payable", type:"liability"},
+    "3000": {name:"Owner's Capital", type:"equity"},
+    "4000": {name:"Sales Revenue", type:"revenue"},
+    "5000": {name:"Cost of Materials", type:"expense"},
+    "5100": {name:"Wages & Labour", type:"expense"},
+    "5200": {name:"Rent", type:"expense"},
+    "5300": {name:"Utilities", type:"expense"},
+    "5400": {name:"Vehicle & Transport", type:"expense"},
+    "5500": {name:"Other Operating Expenses", type:"expense"}
+  };
+  var EXPENSE_CODES = ["5000","5100","5200","5300","5400","5500"];
+  var NORMAL_SIDE = {asset:"debit", expense:"debit", liability:"credit", equity:"credit", revenue:"credit"};
+  var ACCOUNT_ORDER = ["1000","1100","2000","2100","3000","4000","5000","5100","5200","5300","5400","5500"];
+
+  /* ============================== HELPERS ============================== */
+  function fmt(cents){
+    cents = cents || 0;
+    var neg = cents < 0; cents = Math.abs(cents);
+    var v = (cents/100).toLocaleString("en-ZA",{minimumFractionDigits:2,maximumFractionDigits:2});
+    return (neg?"-":"") + "R " + v;
+  }
+  function toCents(str){
+    var n = parseFloat(String(str||"0").replace(/[^0-9.\-]/g,""));
+    if(isNaN(n)) n = 0;
+    return Math.round(n*100);
+  }
+  function todayISO(){ return new Date().toISOString().slice(0,10); }
+  function fmtDate(iso){
+    if(!iso) return "";
+    var d = new Date(iso+"T00:00:00");
+    return d.toLocaleDateString("en-ZA",{day:"2-digit",month:"short",year:"numeric"});
+  }
+  function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+  function uid(){ return Math.random().toString(36).slice(2,10); }
+
+  /* ============================== STATE ============================== */
+  var state = {
+    journal:[], invoices:[], receipts:[], expenses:[],
+    settings:{vatEnabled:false, vatRate:15, openingDone:false},
+    loaded:{journal:false, invoices:false, receipts:false, expenses:false, settings:false},
+    dbUnavailable: !sb,
+    session: null
+  };
+  var route = {view:"dashboard", params:{}};
+
+  function allLoaded(){
+    return state.loaded.journal && state.loaded.invoices && state.loaded.receipts && state.loaded.expenses && state.loaded.settings;
+  }
+  function fromRow(o){ // snake_case (Postgres) -> camelCase (rest of this app's code)
+    var out = {};
+    Object.keys(o).forEach(function(k){
+      var camel = k.replace(/_([a-z])/g, function(_,c){ return c.toUpperCase(); });
+      out[camel] = o[k];
+    });
+    return out;
+  }
+
+  /* ============================== AUTH ============================== */
+  async function initAuth(){
+    if(!sb){ render(); return; }
+    var res = await sb.auth.getSession();
+    state.session = res.data.session;
+    sb.auth.onAuthStateChange(function(_event, session){
+      var wasSignedIn = !!state.session;
+      state.session = session;
+      if(!session){
+        state.journal = []; state.invoices = []; state.receipts = []; state.expenses = [];
+        state.loaded = {journal:false, invoices:false, receipts:false, expenses:false, settings:false};
+      }
+      if(!!session !== wasSignedIn){
+        if(session) loadAll(); else render();
+      }
+    });
+    if(state.session) loadAll(); else render();
+  }
+  async function signIn(email, password){
+    var res = await sb.auth.signInWithPassword({email:email, password:password});
+    if(res.error) throw res.error;
+  }
+  async function signOut(){ await sb.auth.signOut(); }
+
+  /* ============================== DB LAYER (Supabase) ============================== */
+  async function loadAll(){
+    await Promise.all([reloadJournal(), reloadInvoices(), reloadReceipts(), reloadExpenses(), reloadSettings()]);
+    render();
+  }
+
+  async function reloadJournal(){
+    var entriesRes = await sb.from("journal_entries").select("*").order("date", {ascending:true}).order("created_at", {ascending:true});
+    var linesRes = await sb.from("journal_lines").select("*");
+    if(entriesRes.error || linesRes.error){ state.loaded.journal = true; return; }
+    var linesByEntry = {};
+    linesRes.data.forEach(function(l){
+      (linesByEntry[l.entry_id] = linesByEntry[l.entry_id] || []).push({account:l.account, debit:l.debit, credit:l.credit});
+    });
+    state.journal = entriesRes.data.map(function(e){
+      var o = fromRow(e);
+      o.lines = linesByEntry[e.id] || [];
+      return o;
+    });
+    state.loaded.journal = true;
+  }
+  async function reloadInvoices(){
+    var res = await sb.from("invoices").select("*").order("date", {ascending:true});
+    if(!res.error) state.invoices = res.data.map(fromRow);
+    state.loaded.invoices = true;
+  }
+  async function reloadReceipts(){
+    var res = await sb.from("receipts").select("*").order("date", {ascending:true});
+    if(!res.error) state.receipts = res.data.map(fromRow);
+    state.loaded.receipts = true;
+  }
+  async function reloadExpenses(){
+    var res = await sb.from("expenses").select("*").order("date", {ascending:true});
+    if(!res.error) state.expenses = res.data.map(fromRow);
+    state.loaded.expenses = true;
+  }
+  async function reloadSettings(){
+    var res = await sb.from("settings").select("*").eq("id", true).maybeSingle();
+    if(!res.error && res.data){
+      state.settings = {vatEnabled: res.data.vat_enabled, vatRate: Number(res.data.vat_rate), openingDone: res.data.opening_done};
+    }
+    state.loaded.settings = true;
+  }
+
+  async function nextNumber(prefix, table){
+    var res = await sb.from(table).select("id", {count:"exact", head:true});
+    var n = (res.count||0) + 1;
+    var year = new Date().getFullYear();
+    return prefix + "-" + year + "-" + String(n).padStart(4,"0");
+  }
+
+  async function postJournal(entry){
+    var totalDebit = 0, totalCredit = 0;
+    entry.lines.forEach(function(l){ totalDebit += (l.debit||0); totalCredit += (l.credit||0); });
+    if(totalDebit !== totalCredit){
+      throw new Error("Journal entry does not balance (debit " + fmt(totalDebit) + " vs credit " + fmt(totalCredit) + ") — not posted.");
+    }
+    var insertRes = await sb.from("journal_entries").insert({
+      date: entry.date, ref: entry.ref||"", type: entry.type, party: entry.party||"",
+      memo: entry.memo||"", note: entry.note||""
+    }).select().single();
+    if(insertRes.error) throw insertRes.error;
+    var entryId = insertRes.data.id;
+    var linesRes = await sb.from("journal_lines").insert(entry.lines.map(function(l){
+      return {entry_id: entryId, account: l.account, debit: l.debit||0, credit: l.credit||0};
+    }));
+    if(linesRes.error) throw linesRes.error;
+    await reloadJournal();
+  }
+
+  /* ============================== POSTING LOGIC ============================== */
+  async function createInvoice(form){
+    var number = await nextNumber("INV","invoices");
+    var subtotal = 0;
+    form.lines.forEach(function(l){ subtotal += l.amount; });
+    var vat = state.settings.vatEnabled ? Math.round(subtotal * state.settings.vatRate / 100) : 0;
+    var total = subtotal + vat;
+    var insertRes = await sb.from("invoices").insert({
+      number: number, date: form.date, client: form.client, client_contact: form.clientContact||"",
+      lines: form.lines, subtotal: subtotal, vat: vat, total: total,
+      status: "unpaid", paid_total: 0, due_date: form.dueDate || null
+    });
+    if(insertRes.error) throw insertRes.error;
+    await reloadInvoices();
+    var note = "Invoice " + number + " issued to " + form.client + " for " + fmt(subtotal) +
+      (vat ? " plus " + fmt(vat) + " VAT" : "") +
+      ". Revenue is recognised now, when the work is billed, not when cash is received (accrual-basis accounting) — that's why the full " + fmt(total) +
+      " is debited to Accounts Receivable (an asset: money the client now owes us) rather than to Bank." +
+      (vat ? " The " + fmt(vat) + " VAT portion is not our revenue — it is collected on the client's behalf and held in VAT Payable until it is paid over to SARS." : "");
+    var lines = [
+      {account:"1100", debit: total, credit:0},
+      {account:"4000", debit:0, credit: subtotal}
+    ];
+    if(vat) lines.push({account:"2100", debit:0, credit: vat});
+    await postJournal({date: form.date, ref: number, type:"invoice", party: form.client, memo:"Invoice " + number, lines: lines, note: note});
+    return number;
+  }
+
+  async function recordInvoicePayment(invoice, amount, date, method){
+    var number = await nextNumber("RCT","receipts");
+    var insertRes = await sb.from("receipts").insert({
+      number: number, date: date, client: invoice.client, amount: amount, method: method,
+      kind:"invoice_payment", linked_invoice_id: invoice.id, linked_invoice_number: invoice.number
+    });
+    if(insertRes.error) throw insertRes.error;
+    var newPaid = (invoice.paidTotal||0) + amount;
+    var status = newPaid >= invoice.total ? "paid" : "partial";
+    var updRes = await sb.from("invoices").update({paid_total: newPaid, status: status}).eq("id", invoice.id);
+    if(updRes.error) throw updRes.error;
+    await Promise.all([reloadReceipts(), reloadInvoices()]);
+    var note = "Payment of " + fmt(amount) + " received via " + method + " against Invoice " + invoice.number +
+      ". No new revenue is recorded here — it was already recognised when the invoice was issued. This entry simply moves the asset from Accounts Receivable (owed to us) into Bank (cash in hand).";
+    await postJournal({date: date, ref: number, type:"receipt", party: invoice.client, memo:"Receipt " + number + " — payment for " + invoice.number,
+      lines:[{account:"1000", debit: amount, credit:0}, {account:"1100", debit:0, credit: amount}], note: note});
+    return number;
+  }
+
+  async function recordCashSale(form){
+    var number = await nextNumber("RCT","receipts");
+    var subtotal = 0;
+    form.lines.forEach(function(l){ subtotal += l.amount; });
+    var vat = state.settings.vatEnabled ? Math.round(subtotal * state.settings.vatRate / 100) : 0;
+    var total = subtotal + vat;
+    var insertRes = await sb.from("receipts").insert({
+      number: number, date: form.date, client: form.client || "Cash sale", amount: total, method: form.method,
+      kind:"cash_sale", lines: form.lines, subtotal: subtotal, vat: vat
+    });
+    if(insertRes.error) throw insertRes.error;
+    await reloadReceipts();
+    var note = "Cash sale — Receipt " + number + (form.client ? " to " + form.client : "") +
+      ". Payment of " + fmt(total) + " was received immediately, so revenue and cash are recognised in the same entry — there is no Accounts Receivable step because no credit was extended to the client." +
+      (vat ? " Of the " + fmt(total) + " received, " + fmt(vat) + " is VAT collected on SARS's behalf, not revenue." : "");
+    var lines = [{account:"1000", debit: total, credit:0}, {account:"4000", debit:0, credit: subtotal}];
+    if(vat) lines.push({account:"2100", debit:0, credit: vat});
+    await postJournal({date: form.date, ref: number, type:"cash_sale", party: form.client||"", memo:"Receipt " + number, lines: lines, note: note});
+    return number;
+  }
+
+  async function recordExpense(form){
+    var number = await nextNumber("EXP","expenses");
+    var amount = form.amount;
+    var insertRes = await sb.from("expenses").insert({
+      number: number, date: form.date, category: form.category, payee: form.payee||"",
+      amount: amount, paid_via: form.paidVia, memo: form.memo||""
+    });
+    if(insertRes.error) throw insertRes.error;
+    await reloadExpenses();
+    var catName = CHART[form.category].name;
+    var lines, note;
+    if(form.paidVia === "bank"){
+      lines = [{account: form.category, debit: amount, credit:0}, {account:"1000", debit:0, credit: amount}];
+      note = catName + " expense of " + fmt(amount) + " paid to " + (form.payee||"a supplier") + " directly from the bank. Recorded as an expense — a cost of operating the business this period — which reduces both cash and net profit immediately.";
+    } else {
+      lines = [{account: form.category, debit: amount, credit:0}, {account:"2000", debit:0, credit: amount}];
+      note = catName + " expense of " + fmt(amount) + " incurred from " + (form.payee||"a supplier") + " on credit (not yet paid). Recorded now under accrual accounting because the cost has been incurred even though cash hasn't left the bank yet — the amount owed sits in Accounts Payable (a liability) until it's paid.";
+    }
+    await postJournal({date: form.date, ref: number, type:"expense", party: form.payee||"", memo:"Expense " + number + " — " + catName, lines: lines, note: note});
+    return number;
+  }
+
+  async function payPayable(form){
+    var amount = form.amount;
+    var note = "Payment of " + fmt(amount) + " made to " + (form.payee||"a supplier") + " to settle an outstanding Accounts Payable balance. This is not a new expense — the expense was already recorded when the bill was incurred — this entry only reduces the liability and the cash balance.";
+    await postJournal({date: form.date, ref:"", type:"payable_payment", party: form.payee||"", memo:"Payment to " + (form.payee||"supplier"),
+      lines:[{account:"2000", debit: amount, credit:0}, {account:"1000", debit:0, credit: amount}], note: note});
+  }
+
+  async function ownerTransaction(kind, amount, date, memo){
+    if(kind === "contribution"){
+      var note1 = "Owner contributed " + fmt(amount) + " into the business" + (memo? " (" + memo + ")":"") + ". This is not revenue — it's the owner investing personal funds — recorded as an increase to both Bank (asset) and Owner's Capital (equity).";
+      await postJournal({date:date, ref:"", type:"owner_contribution", party:"Owner", memo: memo||"Owner contribution",
+        lines:[{account:"1000", debit:amount, credit:0}, {account:"3000", debit:0, credit:amount}], note: note1});
+    } else {
+      var note2 = "Owner withdrew " + fmt(amount) + " from the business for personal use" + (memo? " (" + memo + ")":"") + ". This is not a business expense — it's a return of the owner's own equity — recorded as a decrease to both Bank (asset) and Owner's Capital (equity); it does not affect net profit.";
+      await postJournal({date:date, ref:"", type:"owner_drawing", party:"Owner", memo: memo||"Owner drawing",
+        lines:[{account:"3000", debit:amount, credit:0}, {account:"1000", debit:0, credit:amount}], note: note2});
+    }
+  }
+
+  async function postOpeningBalances(form){
+    var bank = form.bank||0, ar = form.ar||0, ap = form.ap||0;
+    var capital = bank + ar - ap;
+    var lines = [];
+    if(bank) lines.push({account:"1000", debit:bank, credit:0});
+    if(ar) lines.push({account:"1100", debit:ar, credit:0});
+    if(ap) lines.push({account:"2000", debit:0, credit:ap});
+    if(capital > 0) lines.push({account:"3000", debit:0, credit:capital});
+    else if(capital < 0) lines.push({account:"3000", debit:-capital, credit:0});
+    var note = "Opening balances entered when setting up the books on " + fmtDate(form.date) + ". Owner's Capital of " + fmt(Math.abs(capital)) + " is calculated as the balancing figure (Assets minus Liabilities) so total debits equal total credits from day one — it represents the owner's stake in the business at this starting point.";
+    if(lines.length){
+      await postJournal({date: form.date, ref:"OPEN", type:"opening", party:"", memo:"Opening balances", lines: lines, note: note});
+    }
+    await saveSettings({openingDone:true});
+  }
+
+  async function saveSettings(patch){
+    var merged = Object.assign({}, state.settings, patch);
+    var res = await sb.from("settings").update({
+      vat_enabled: merged.vatEnabled, vat_rate: merged.vatRate, opening_done: merged.openingDone,
+      updated_at: new Date().toISOString()
+    }).eq("id", true);
+    if(res.error) throw res.error;
+    await reloadSettings();
+  }
+
+  /* ============================== LEDGER / STATEMENT MATH ============================== */
+  function accountEntries(code, start, end){
+    var rows = [];
+    state.journal.forEach(function(j){
+      if(start && j.date < start) return;
+      if(end && j.date > end) return;
+      j.lines.forEach(function(l){
+        if(l.account === code && ((l.debit||0) || (l.credit||0))){
+          rows.push({date:j.date, ref:j.ref, memo:j.memo, debit:l.debit||0, credit:l.credit||0, note:j.note});
+        }
+      });
+    });
+    rows.sort(function(a,b){ return a.date < b.date ? -1 : a.date > b.date ? 1 : 0; });
+    return rows;
+  }
+
+  function accountTotals(code, start, end){
+    var debit=0, credit=0;
+    state.journal.forEach(function(j){
+      if(start && j.date < start) return;
+      if(end && j.date > end) return;
+      j.lines.forEach(function(l){ if(l.account===code){ debit += l.debit||0; credit += l.credit||0; } });
+    });
+    var side = NORMAL_SIDE[CHART[code].type];
+    var balance = side === "debit" ? debit - credit : credit - debit;
+    return {debit:debit, credit:credit, balance:balance, side:side};
+  }
+
+  function netIncome(start, end){
+    var rev = 0, exp = 0;
+    ACCOUNT_ORDER.forEach(function(code){
+      var t = accountTotals(code, start, end);
+      if(CHART[code].type === "revenue") rev += t.balance;
+      if(CHART[code].type === "expense") exp += t.balance;
+    });
+    return rev - exp;
+  }
+
+  /* ============================== ROUTER ============================== */
+  function parseHash(){
+    var h = location.hash.replace(/^#/,"") || "dashboard";
+    var parts = h.split("?");
+    var view = parts[0] || "dashboard";
+    var params = {};
+    if(parts[1]){
+      parts[1].split("&").forEach(function(kv){
+        var pair = kv.split("=");
+        params[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1]||"");
+      });
+    }
+    route = {view:view, params:params};
+  }
+  window.addEventListener("hashchange", function(){ parseHash(); render(); window.scrollTo(0,0); });
+
+  /* ============================== UI: SHELL ============================== */
+  var NAV = [
+    {group:"Overview", items:[["dashboard","Dashboard"]]},
+    {group:"Sales", items:[["invoice-new","+ New Invoice"],["invoices","Invoices"],["receipt-new","+ New Receipt"],["receipts","Receipts"]]},
+    {group:"Expenses", items:[["expense-new","+ New Expense"],["expenses","Expenses"],["payable-pay","Pay a Bill"]]},
+    {group:"Equity", items:[["owner-tx","Owner Contribution / Drawing"]]},
+    {group:"Accounting Records", items:[["journal","Journal"],["ledger","Ledger (T-Accounts)"],["trial-balance","Trial Balance"],["income-statement","Income Statement"],["balance-sheet","Balance Sheet"]]},
+    {group:"Setup", items:[["settings","Settings"]]}
+  ];
+
+  function sidebarHtml(){
+    var html = '<div class="sidebar" id="sidebar">';
+    html += '<div class="brand"><img src="'+LOGO+'" alt=""><div class="t">Pime Engineering<small>ACCOUNTS</small></div></div>';
+    NAV.forEach(function(g){
+      html += '<div class="navgroup"><div class="lbl">'+g.group.toUpperCase()+'</div>';
+      g.items.forEach(function(it){
+        var active = route.view === it[0] ? " active" : "";
+        html += '<a class="navlink'+active+'" href="#'+it[0]+'"><span class="dot"></span>'+esc(it[1])+'</a>';
+      });
+      html += '</div>';
+    });
+    html += '<div class="navgroup"><button class="navlink" id="signOutBtn" style="width:100%;text-align:left;border:none;background:none;cursor:pointer;">'+
+      '<span class="dot"></span>Sign out ('+esc(state.session && state.session.user ? state.session.user.email : "")+')</button></div>';
+    html += '</div>';
+    return html;
+  }
+
+  function mobTopHtml(){
+    return '<div class="mobtop"><strong style="font-family:Oswald,sans-serif;">Pime Accounts</strong><button id="mobMenuBtn" aria-label="Menu">&#9776;</button></div>';
+  }
+
+  /* ============================== UI: DASHBOARD ============================== */
+  function viewDashboard(){
+    var thisMonth = todayISO().slice(0,7);
+    var monthStart = thisMonth + "-01";
+    var bank = accountTotals("1000").balance;
+    var ar = accountTotals("1100").balance;
+    var ni = netIncome(monthStart, todayISO());
+    var outstanding = 0;
+    state.invoices.forEach(function(i){ if(i.status !== "paid") outstanding += (i.total - (i.paidTotal||0)); });
+
+    var html = '<div class="pagehead"><div><h1>Dashboard</h1><div class="sub">Overview as at '+fmtDate(todayISO())+'</div></div>' +
+      '<a class="btn btn-gold" href="#invoice-new">+ New Invoice</a></div>';
+
+    html += '<div class="statcards">' +
+      '<div class="statcard"><div class="l">BANK BALANCE</div><div class="v">'+fmt(bank)+'</div></div>' +
+      '<div class="statcard"><div class="l">ACCOUNTS RECEIVABLE</div><div class="v">'+fmt(ar)+'</div></div>' +
+      '<div class="statcard"><div class="l">OUTSTANDING INVOICES</div><div class="v">'+fmt(outstanding)+'</div></div>' +
+      '<div class="statcard"><div class="l">NET INCOME (THIS MONTH)</div><div class="v">'+fmt(ni)+'</div></div>' +
+      '</div>';
+
+    html += '<div class="card"><h3>Recent activity</h3>';
+    var recent = state.journal.slice(-8).reverse();
+    if(!recent.length){
+      html += '<div class="emptystate">No transactions yet. Start with <a href="#invoice-new" style="color:var(--gold);font-weight:600;">+ New Invoice</a> or set opening balances in <a href="#settings" style="color:var(--gold);font-weight:600;">Settings</a>.</div>';
+    } else {
+      html += '<table class="list"><thead><tr><th>Date</th><th>Ref</th><th>Description</th><th class="num">Amount</th></tr></thead><tbody>';
+      recent.forEach(function(j){
+        var amt = 0; j.lines.forEach(function(l){ amt += l.debit||0; });
+        html += '<tr><td class="small">'+fmtDate(j.date)+'</td><td class="small">'+esc(j.ref)+'</td><td>'+esc(j.memo)+'</td><td class="num">'+fmt(amt)+'</td></tr>';
+      });
+      html += '</tbody></table>';
+    }
+    html += '</div>';
+    return html;
+  }
+
+  /* ============================== UI: INVOICE FORM ============================== */
+  function emptyLine(){ return {id:uid(), desc:"", qty:1, unitPrice:0, amount:0}; }
+  var invoiceDraft = null;
+  function resetInvoiceDraft(){ invoiceDraft = {date: todayISO(), client:"", clientContact:"", dueDate:"", lines:[emptyLine()]}; }
+
+  function lineItemsHtml(lines, prefix){
+    var html = '<div class="lineitems"><table><thead><tr><th style="width:44%">Description</th><th style="width:14%">Qty</th><th style="width:18%">Unit price</th><th style="width:18%">Amount</th><th></th></tr></thead><tbody>';
+    lines.forEach(function(l, i){
+      html += '<tr data-lineid="'+l.id+'">' +
+        '<td><input type="text" data-f="desc" value="'+esc(l.desc)+'" placeholder="e.g. Machined bushing set"></td>' +
+        '<td><input type="number" min="0" step="1" data-f="qty" value="'+l.qty+'" style="width:100%"></td>' +
+        '<td><input type="text" inputmode="decimal" data-f="unitPrice" value="'+(l.unitPrice? (l.unitPrice/100).toFixed(2):"")+'" placeholder="0.00" style="width:100%"></td>' +
+        '<td class="num" style="padding-right:10px;">'+fmt(l.amount)+'</td>' +
+        '<td>'+(lines.length>1? '<button type="button" class="rm" data-rm="'+l.id+'">&times;</button>':'')+'</td>' +
+        '</tr>';
+    });
+    html += '</tbody></table></div>';
+    html += '<button type="button" class="btn btn-ghost btn-sm" id="addLineBtn">+ Add line</button>';
+    return html;
+  }
+
+  function viewInvoiceNew(){
+    if(!invoiceDraft) resetInvoiceDraft();
+    var subtotal = 0; invoiceDraft.lines.forEach(function(l){ subtotal += l.amount; });
+    var vat = state.settings.vatEnabled ? Math.round(subtotal*state.settings.vatRate/100) : 0;
+    var total = subtotal+vat;
+
+    var clientOptions = Array.from(new Set(state.invoices.map(function(i){return i.client;}))).filter(Boolean);
+
+    var html = '<div class="pagehead"><div><h1>New Invoice</h1><div class="sub">Issuing recognises revenue immediately (accrual basis) — payment is recorded separately when it arrives.</div></div></div>';
+    html += '<form id="invoiceForm">';
+    html += '<div class="card"><div class="grid3">';
+    html += '<div class="field"><label>Client</label><input list="clientList" type="text" id="invClient" value="'+esc(invoiceDraft.client)+'" required></div>';
+    html += '<datalist id="clientList">'+clientOptions.map(function(c){return '<option value="'+esc(c)+'">';}).join("")+'</datalist>';
+    html += '<div class="field"><label>Invoice date</label><input type="date" id="invDate" value="'+invoiceDraft.date+'" required></div>';
+    html += '<div class="field"><label>Due date</label><input type="date" id="invDue" value="'+invoiceDraft.dueDate+'"></div>';
+    html += '</div>';
+    html += '<div class="field"><label>Client contact (phone / email, optional)</label><input type="text" id="invContact" value="'+esc(invoiceDraft.clientContact)+'"></div>';
+    html += '</div>';
+
+    html += '<div class="card"><h3>Line items</h3><div id="lineItemsWrap">'+lineItemsHtml(invoiceDraft.lines)+'</div>';
+    html += '<div style="margin-top:16px;display:flex;justify-content:flex-end;"><div style="width:260px;">';
+    html += '<div class="inline" style="justify-content:space-between;"><span>Subtotal</span><strong>'+fmt(subtotal)+'</strong></div>';
+    if(state.settings.vatEnabled) html += '<div class="inline" style="justify-content:space-between;"><span>VAT ('+state.settings.vatRate+'%)</span><strong>'+fmt(vat)+'</strong></div>';
+    html += '<div class="inline" style="justify-content:space-between;border-top:2px solid var(--navy);padding-top:6px;margin-top:6px;"><span>Total</span><strong style="font-size:1.15rem;">'+fmt(total)+'</strong></div>';
+    html += '</div></div></div>';
+
+    html += '<div class="note" id="postingPreview" style="margin-bottom:20px;">On save, this posts: <strong>Debit</strong> Accounts Receivable '+fmt(total)+'; <strong>Credit</strong> Sales Revenue '+fmt(subtotal)+(vat? '; <strong>Credit</strong> VAT Payable '+fmt(vat):'')+'.</div>';
+
+    html += '<button type="submit" class="btn btn-gold" id="invoiceSubmitBtn">Save &amp; issue invoice</button>';
+    html += '</form>';
+    return html;
+  }
+
+  function bindLineItemEvents(containerId, draftLines, onchange){
+    var wrap = document.getElementById(containerId);
+    if(!wrap) return;
+    wrap.querySelectorAll('input[data-f]').forEach(function(inp){
+      inp.addEventListener("input", function(){
+        var tr = inp.closest("tr");
+        var id = tr.getAttribute("data-lineid");
+        var line = draftLines.filter(function(l){return l.id===id;})[0];
+        if(!line) return;
+        var f = inp.getAttribute("data-f");
+        if(f === "qty") line.qty = parseFloat(inp.value)||0;
+        else if(f === "unitPrice") line.unitPrice = toCents(inp.value);
+        else line[f] = inp.value;
+        line.amount = Math.round((line.qty||0) * (line.unitPrice||0));
+        onchange();
+      });
+    });
+    wrap.querySelectorAll('[data-rm]').forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var id = btn.getAttribute("data-rm");
+        var idx = draftLines.findIndex(function(l){return l.id===id;});
+        if(idx>-1) draftLines.splice(idx,1);
+        onchange();
+      });
+    });
+  }
+
+  /* ============================== UI: RECEIPT FORMS ============================== */
+  function viewReceiptNew(){
+    var unpaidInvoices = state.invoices.filter(function(i){ return i.status !== "paid"; });
+    var html = '<div class="pagehead"><div><h1>New Receipt</h1><div class="sub">Record money received — either against an existing invoice, or an immediate cash sale.</div></div></div>';
+
+    html += '<div class="grid2">';
+
+    html += '<div class="card"><h3>Payment against an invoice</h3>';
+    if(!unpaidInvoices.length){
+      html += '<div class="muted small">No outstanding invoices right now.</div>';
+    } else {
+      html += '<form id="payInvoiceForm">';
+      html += '<div class="field"><label>Invoice</label><select id="payInvoiceSelect">';
+      unpaidInvoices.forEach(function(i){
+        var due = i.total - (i.paidTotal||0);
+        html += '<option value="'+i.id+'">'+esc(i.number)+' — '+esc(i.client)+' — due '+fmt(due)+'</option>';
+      });
+      html += '</select></div>';
+      html += '<div class="grid2"><div class="field"><label>Amount received</label><input type="text" inputmode="decimal" id="payAmount" placeholder="0.00" required></div>';
+      html += '<div class="field"><label>Date</label><input type="date" id="payDate" value="'+todayISO()+'"></div></div>';
+      html += '<div class="field"><label>Method</label><select id="payMethod"><option>EFT</option><option>Cash</option><option>Card</option><option>Other</option></select></div>';
+      html += '<button type="submit" class="btn btn-gold">Record payment</button>';
+      html += '</form>';
+    }
+    html += '</div>';
+
+    html += '<div class="card"><h3>Cash sale (no invoice)</h3>';
+    html += '<form id="cashSaleForm">';
+    html += '<div class="field"><label>Client (optional)</label><input type="text" id="csClient"></div>';
+    html += '<div class="field"><label>Description</label><input type="text" id="csDesc" placeholder="e.g. Over-the-counter machining job" required></div>';
+    html += '<div class="grid2"><div class="field"><label>Amount</label><input type="text" inputmode="decimal" id="csAmount" placeholder="0.00" required></div>';
+    html += '<div class="field"><label>Date</label><input type="date" id="csDate" value="'+todayISO()+'"></div></div>';
+    html += '<div class="field"><label>Method</label><select id="csMethod"><option>Cash</option><option>EFT</option><option>Card</option><option>Other</option></select></div>';
+    if(state.settings.vatEnabled) html += '<div class="hint" style="margin-bottom:10px;">VAT ('+state.settings.vatRate+'%) will be added on top of this amount.</div>';
+    html += '<button type="submit" class="btn btn-gold">Record cash sale</button>';
+    html += '</form></div>';
+
+    html += '</div>';
+    return html;
+  }
+
+  function viewExpenseNew(){
+    var html = '<div class="pagehead"><div><h1>New Expense</h1><div class="sub">Log a cost of running the business — paid now, or on credit.</div></div></div>';
+    html += '<div class="card"><form id="expenseForm">';
+    html += '<div class="grid2">';
+    html += '<div class="field"><label>Category</label><select id="expCategory">' + EXPENSE_CODES.map(function(c){return '<option value="'+c+'">'+CHART[c].name+'</option>';}).join("") + '</select></div>';
+    html += '<div class="field"><label>Payee / supplier</label><input type="text" id="expPayee"></div>';
+    html += '</div><div class="grid2">';
+    html += '<div class="field"><label>Amount</label><input type="text" inputmode="decimal" id="expAmount" placeholder="0.00" required></div>';
+    html += '<div class="field"><label>Date</label><input type="date" id="expDate" value="'+todayISO()+'"></div>';
+    html += '</div>';
+    html += '<div class="field"><label>Paid via</label><select id="expPaidVia"><option value="bank">Paid now, from Bank</option><option value="payable">On credit (Accounts Payable — pay later)</option></select></div>';
+    html += '<div class="field"><label>Note (optional)</label><textarea id="expMemo"></textarea></div>';
+    html += '<button type="submit" class="btn btn-gold">Save expense</button>';
+    html += '</form></div>';
+    return html;
+  }
+
+  function viewPayablePay(){
+    var apBalance = accountTotals("2000").balance;
+    var html = '<div class="pagehead"><div><h1>Pay a Bill</h1><div class="sub">Settle an outstanding Accounts Payable balance (an expense already recorded on credit).</div></div></div>';
+    html += '<div class="card"><div class="note" style="margin-bottom:16px;">Current Accounts Payable balance: <strong>'+fmt(apBalance)+'</strong></div>';
+    html += '<form id="payPayableForm">';
+    html += '<div class="field"><label>Paid to</label><input type="text" id="ppPayee"></div>';
+    html += '<div class="grid2"><div class="field"><label>Amount</label><input type="text" inputmode="decimal" id="ppAmount" placeholder="0.00" required></div>';
+    html += '<div class="field"><label>Date</label><input type="date" id="ppDate" value="'+todayISO()+'"></div></div>';
+    html += '<button type="submit" class="btn btn-gold">Record payment</button>';
+    html += '</form></div>';
+    return html;
+  }
+
+  function viewOwnerTx(){
+    var capBalance = accountTotals("3000").balance;
+    var html = '<div class="pagehead"><div><h1>Owner Contribution / Drawing</h1><div class="sub">Money the owner puts into or takes out of the business — this is equity, not revenue or expense.</div></div></div>';
+    html += '<div class="card"><div class="note" style="margin-bottom:16px;">Current Owner\'s Capital balance: <strong>'+fmt(capBalance)+'</strong></div>';
+    html += '<form id="ownerTxForm">';
+    html += '<div class="field"><label>Type</label><select id="otKind"><option value="contribution">Contribution — owner puts money in</option><option value="drawing">Drawing — owner takes money out</option></select></div>';
+    html += '<div class="grid2"><div class="field"><label>Amount</label><input type="text" inputmode="decimal" id="otAmount" placeholder="0.00" required></div>';
+    html += '<div class="field"><label>Date</label><input type="date" id="otDate" value="'+todayISO()+'"></div></div>';
+    html += '<div class="field"><label>Note (optional)</label><input type="text" id="otMemo"></div>';
+    html += '<button type="submit" class="btn btn-gold">Save</button>';
+    html += '</form></div>';
+    return html;
+  }
+
+  /* ============================== UI: LISTS ============================== */
+  function viewInvoices(){
+    var html = '<div class="pagehead"><div><h1>Invoices</h1></div><a class="btn btn-gold" href="#invoice-new">+ New Invoice</a></div>';
+    if(!state.invoices.length){ html += '<div class="card"><div class="emptystate">No invoices yet.</div></div>'; return html; }
+    html += '<div class="card" style="padding:0;"><table class="list"><thead><tr><th>Number</th><th>Date</th><th>Client</th><th class="num">Total</th><th class="num">Paid</th><th>Status</th><th></th></tr></thead><tbody>';
+    state.invoices.slice().reverse().forEach(function(i){
+      html += '<tr><td>'+esc(i.number)+'</td><td class="small">'+fmtDate(i.date)+'</td><td>'+esc(i.client)+'</td>' +
+        '<td class="num">'+fmt(i.total)+'</td><td class="num">'+fmt(i.paidTotal||0)+'</td>' +
+        '<td><span class="badge '+i.status+'">'+i.status+'</span></td>' +
+        '<td><a class="btn btn-ghost btn-sm" href="#invoice-view?id='+i.id+'">View</a></td></tr>';
+    });
+    html += '</tbody></table></div>';
+    return html;
+  }
+
+  function viewReceipts(){
+    var html = '<div class="pagehead"><div><h1>Receipts</h1></div><a class="btn btn-gold" href="#receipt-new">+ New Receipt</a></div>';
+    if(!state.receipts.length){ html += '<div class="card"><div class="emptystate">No receipts yet.</div></div>'; return html; }
+    html += '<div class="card" style="padding:0;"><table class="list"><thead><tr><th>Number</th><th>Date</th><th>Client</th><th>Type</th><th class="num">Amount</th><th></th></tr></thead><tbody>';
+    state.receipts.slice().reverse().forEach(function(r){
+      html += '<tr><td>'+esc(r.number)+'</td><td class="small">'+fmtDate(r.date)+'</td><td>'+esc(r.client)+'</td>' +
+        '<td class="small">'+(r.kind==="cash_sale"?"Cash sale":"Invoice payment")+'</td>' +
+        '<td class="num">'+fmt(r.amount)+'</td>' +
+        '<td><a class="btn btn-ghost btn-sm" href="#receipt-view?id='+r.id+'">View</a></td></tr>';
+    });
+    html += '</tbody></table></div>';
+    return html;
+  }
+
+  function viewExpenses(){
+    var html = '<div class="pagehead"><div><h1>Expenses</h1></div><a class="btn btn-gold" href="#expense-new">+ New Expense</a></div>';
+    if(!state.expenses.length){ html += '<div class="card"><div class="emptystate">No expenses logged yet.</div></div>'; return html; }
+    html += '<div class="card" style="padding:0;"><table class="list"><thead><tr><th>Number</th><th>Date</th><th>Category</th><th>Payee</th><th>Paid via</th><th class="num">Amount</th></tr></thead><tbody>';
+    state.expenses.slice().reverse().forEach(function(e){
+      html += '<tr><td>'+esc(e.number)+'</td><td class="small">'+fmtDate(e.date)+'</td><td>'+esc(CHART[e.category]?CHART[e.category].name:e.category)+'</td>' +
+        '<td>'+esc(e.payee)+'</td><td class="small">'+(e.paidVia==="bank"?"Bank":"Accounts Payable")+'</td>' +
+        '<td class="num">'+fmt(e.amount)+'</td></tr>';
+    });
+    html += '</tbody></table></div>';
+    return html;
+  }
+
+  /* ============================== UI: PRINTABLE DOCS ============================== */
+  function viewInvoiceDoc(id){
+    var inv = state.invoices.filter(function(i){return i.id===id;})[0];
+    if(!inv) return '<div class="card">Invoice not found.</div>';
+    var html = '<div class="pagehead"><div><h1>Invoice '+esc(inv.number)+'</h1></div>' +
+      '<div><a class="btn btn-ghost" href="#invoices">&larr; Back to invoices</a></div></div>';
+    html += '<div class="doc-view"><div class="doc-inner">';
+    html += '<div class="doc-top"><img src="'+LOGO+'" alt=""><div class="doctype"><h2>INVOICE</h2><div class="num">'+esc(inv.number)+'</div></div></div>';
+    html += '<div class="doc-meta"><div><div class="lbl">BILLED TO</div><div>'+esc(inv.client)+'</div>'+(inv.clientContact?'<div class="small muted">'+esc(inv.clientContact)+'</div>':'')+'</div>';
+    html += '<div style="text-align:right;"><div class="lbl">DATE</div><div>'+fmtDate(inv.date)+'</div>' + (inv.dueDate? '<div class="lbl" style="margin-top:8px;">DUE</div><div>'+fmtDate(inv.dueDate)+'</div>':'') + '</div></div>';
+    html += '<table class="doc-table"><thead><tr><th>Description</th><th class="num">Qty</th><th class="num">Unit price</th><th class="num">Amount</th></tr></thead><tbody>';
+    inv.lines.forEach(function(l){
+      html += '<tr><td>'+esc(l.desc)+'</td><td class="num">'+l.qty+'</td><td class="num">'+fmt(l.unitPrice)+'</td><td class="num">'+fmt(l.amount)+'</td></tr>';
+    });
+    html += '</tbody></table>';
+    html += '<div class="doc-totals"><div class="r"><span>Subtotal</span><span>'+fmt(inv.subtotal)+'</span></div>';
+    if(inv.vat) html += '<div class="r"><span>VAT</span><span>'+fmt(inv.vat)+'</span></div>';
+    html += '<div class="r total"><span>Total</span><span>'+fmt(inv.total)+'</span></div>';
+    if(inv.paidTotal) html += '<div class="r"><span>Paid</span><span>'+fmt(inv.paidTotal)+'</span></div><div class="r"><span>Balance due</span><span>'+fmt(inv.total-inv.paidTotal)+'</span></div>';
+    html += '</div>';
+    html += '<div class="doc-foot">'+esc(COMPANY.name)+' &middot; '+esc(COMPANY.address)+' &middot; '+esc(COMPANY.phone)+' &middot; '+esc(COMPANY.email)+' &middot; Reg. No. '+esc(COMPANY.reg)+'</div>';
+    html += '</div>';
+    html += '<div class="doc-actions"><button class="btn btn-gold" onclick="window.print()">Print / Save as PDF</button>';
+    if(inv.status !== "paid") html += '<a class="btn btn-ghost" href="#receipt-new">Record a payment</a>';
+    html += '</div></div>';
+    return html;
+  }
+
+  function viewReceiptDoc(id){
+    var r = state.receipts.filter(function(x){return x.id===id;})[0];
+    if(!r) return '<div class="card">Receipt not found.</div>';
+    var html = '<div class="pagehead"><div><h1>Receipt '+esc(r.number)+'</h1></div>' +
+      '<div><a class="btn btn-ghost" href="#receipts">&larr; Back to receipts</a></div></div>';
+    html += '<div class="doc-view"><div class="doc-inner">';
+    html += '<div class="doc-top"><img src="'+LOGO+'" alt=""><div class="doctype"><h2>RECEIPT</h2><div class="num">'+esc(r.number)+'</div></div></div>';
+    html += '<div class="doc-meta"><div><div class="lbl">RECEIVED FROM</div><div>'+esc(r.client)+'</div></div>';
+    html += '<div style="text-align:right;"><div class="lbl">DATE</div><div>'+fmtDate(r.date)+'</div></div></div>';
+    if(r.kind === "cash_sale" && r.lines){
+      html += '<table class="doc-table"><thead><tr><th>Description</th><th class="num">Qty</th><th class="num">Unit price</th><th class="num">Amount</th></tr></thead><tbody>';
+      r.lines.forEach(function(l){ html += '<tr><td>'+esc(l.desc)+'</td><td class="num">'+l.qty+'</td><td class="num">'+fmt(l.unitPrice)+'</td><td class="num">'+fmt(l.amount)+'</td></tr>'; });
+      html += '</tbody></table>';
+      html += '<div class="doc-totals"><div class="r"><span>Subtotal</span><span>'+fmt(r.subtotal)+'</span></div>';
+      if(r.vat) html += '<div class="r"><span>VAT</span><span>'+fmt(r.vat)+'</span></div>';
+      html += '<div class="r total"><span>Total received</span><span>'+fmt(r.amount)+'</span></div></div>';
+    } else {
+      html += '<div class="note" style="margin-bottom:20px;">Payment received against Invoice <strong>'+esc(r.linkedInvoiceNumber)+'</strong>, via '+esc(r.method)+'.</div>';
+      html += '<div class="doc-totals"><div class="r total"><span>Amount received</span><span>'+fmt(r.amount)+'</span></div></div>';
+    }
+    html += '<div class="doc-foot">With thanks — '+esc(COMPANY.name)+' &middot; '+esc(COMPANY.address)+' &middot; '+esc(COMPANY.phone)+' &middot; Reg. No. '+esc(COMPANY.reg)+'</div>';
+    html += '</div><div class="doc-actions"><button class="btn btn-gold" onclick="window.print()">Print / Save as PDF</button></div></div>';
+    return html;
+  }
+
+  /* ============================== UI: JOURNAL ============================== */
+  function viewJournal(){
+    var html = '<div class="pagehead"><div><h1>Journal</h1><div class="sub">Every transaction, in the order it happened, with the accounting reasoning behind it.</div></div></div>';
+    if(!state.journal.length){ html += '<div class="card"><div class="emptystate">No journal entries yet.</div></div>'; return html; }
+    state.journal.slice().reverse().forEach(function(j){
+      html += '<div class="card">';
+      html += '<div class="inline" style="justify-content:space-between;margin-bottom:10px;">' +
+        '<div><strong>'+esc(j.memo)+'</strong> <span class="muted small">'+esc(j.ref)+'</span></div>' +
+        '<div class="small muted">'+fmtDate(j.date)+'</div></div>';
+      html += '<table class="list" style="margin-bottom:10px;"><thead><tr><th>Account</th><th class="num">Debit</th><th class="num">Credit</th></tr></thead><tbody>';
+      j.lines.forEach(function(l){
+        html += '<tr><td>'+esc(l.account)+' — '+esc(CHART[l.account]?CHART[l.account].name:"")+'</td>' +
+          '<td class="num">'+(l.debit? fmt(l.debit):'')+'</td><td class="num">'+(l.credit? fmt(l.credit):'')+'</td></tr>';
+      });
+      html += '</tbody></table>';
+      if(j.note) html += '<div class="note">'+esc(j.note)+'</div>';
+      html += '</div>';
+    });
+    return html;
+  }
+
+  /* ============================== UI: LEDGER (T-ACCOUNTS) ============================== */
+  function viewLedger(){
+    var html = '<div class="pagehead"><div><h1>Ledger — T-Accounts</h1><div class="sub">Every account\'s postings, debit on the left, credit on the right, as in a traditional ledger.</div></div></div>';
+    ACCOUNT_ORDER.forEach(function(code){
+      var rows = accountEntries(code);
+      var t = accountTotals(code);
+      if(!rows.length) return;
+      html += '<div class="taccount">';
+      html += '<div class="hd"><div><span class="code">'+code+'</span><strong>'+esc(CHART[code].name)+'</strong></div><div class="small" style="color:var(--gold-light);">'+CHART[code].type.toUpperCase()+' &middot; normal balance: '+t.side+'</div></div>';
+      html += '<div class="tgrid"><div class="col-l"><div class="col-h">DEBIT</div>';
+      rows.forEach(function(r){ if(r.debit) html += '<div class="trow"><span>'+esc(r.memo)+'<div class="d">'+fmtDate(r.date)+' &middot; '+esc(r.ref)+'</div></span><strong>'+fmt(r.debit)+'</strong></div>'; });
+      html += '</div><div><div class="col-h">CREDIT</div>';
+      rows.forEach(function(r){ if(r.credit) html += '<div class="trow"><span>'+esc(r.memo)+'<div class="d">'+fmtDate(r.date)+' &middot; '+esc(r.ref)+'</div></span><strong>'+fmt(r.credit)+'</strong></div>'; });
+      html += '</div></div>';
+      html += '<div class="tfoot"><span>Total debits: '+fmt(t.debit)+'</span><span>Total credits: '+fmt(t.credit)+'</span></div>';
+      html += '<div class="tbalance">Balance: <strong>'+fmt(Math.abs(t.balance))+'</strong> '+(t.balance>=0? t.side.toUpperCase() : (t.side==="debit"?"CREDIT":"DEBIT"))+' — '+ledgerNote(code,t)+'</div>';
+      html += '</div>';
+    });
+    if(!state.journal.length) html += '<div class="card"><div class="emptystate">No postings yet.</div></div>';
+    return html;
+  }
+  function ledgerNote(code, t){
+    var type = CHART[code].type;
+    if(type==="asset") return "an asset increases on the debit side, so this balance is what the business currently holds or is owed.";
+    if(type==="liability") return "a liability increases on the credit side, so this balance is what the business currently owes.";
+    if(type==="equity") return "equity increases on the credit side, representing the owner's stake in the business.";
+    if(type==="revenue") return "revenue increases on the credit side — this is total income earned to date.";
+    return "an expense increases on the debit side — this is total cost incurred to date.";
+  }
+
+  /* ============================== UI: TRIAL BALANCE ============================== */
+  function viewTrialBalance(){
+    var html = '<div class="pagehead"><div><h1>Trial Balance</h1><div class="sub">Every account\'s balance, as at '+fmtDate(todayISO())+'. Total debits must equal total credits.</div></div></div>';
+    html += '<div class="card"><table class="list statement-table"><thead><tr><th>Code</th><th>Account</th><th class="num">Debit</th><th class="num">Credit</th></tr></thead><tbody>';
+    var totalDebit=0, totalCredit=0;
+    ACCOUNT_ORDER.forEach(function(code){
+      var t = accountTotals(code);
+      if(!t.debit && !t.credit) return;
+      var debitCol = t.side==="debit" ? Math.max(t.balance,0) : 0;
+      var creditCol = t.side==="credit" ? Math.max(t.balance,0) : 0;
+      totalDebit += debitCol; totalCredit += creditCol;
+      html += '<tr><td class="small muted">'+code+'</td><td>'+esc(CHART[code].name)+'</td><td class="num">'+(debitCol?fmt(debitCol):'')+'</td><td class="num">'+(creditCol?fmt(creditCol):'')+'</td></tr>';
+    });
+    html += '<tr class="total-row"><td></td><td>Total</td><td class="num">'+fmt(totalDebit)+'</td><td class="num">'+fmt(totalCredit)+'</td></tr>';
+    html += '</tbody></table></div>';
+    var balanced = totalDebit === totalCredit;
+    html += '<div class="balcheck '+(balanced?"ok":"bad")+'">'+(balanced? "&#10003; Balanced — debits equal credits" : "&#10007; Out of balance — check recent entries")+'</div>';
+    return html;
+  }
+
+  /* ============================== UI: INCOME STATEMENT ============================== */
+  function viewIncomeStatement(){
+    var qp = route.params;
+    var start = qp.start || todayISO().slice(0,8)+"01";
+    var end = qp.end || todayISO();
+    var html = '<div class="pagehead"><div><h1>Income Statement</h1><div class="sub">Revenue earned less expenses incurred, for the period selected — this is profit, not cash.</div></div></div>';
+    html += '<div class="card"><form id="periodForm" class="inline">' +
+      '<div class="field" style="margin:0;"><label>From</label><input type="date" id="isStart" value="'+start+'"></div>' +
+      '<div class="field" style="margin:0;"><label>To</label><input type="date" id="isEnd" value="'+end+'"></div>' +
+      '<button class="btn btn-ghost" type="submit" style="margin-top:20px;">Update</button></form></div>';
+
+    var revTotal=0, expTotal=0;
+    html += '<div class="card"><table class="list statement-table"><tbody>';
+    html += '<tr class="section-row"><td colspan="2">Revenue</td></tr>';
+    ACCOUNT_ORDER.forEach(function(code){
+      if(CHART[code].type!=="revenue") return;
+      var t = accountTotals(code, start, end);
+      if(!t.debit && !t.credit) return;
+      revTotal += t.balance;
+      html += '<tr><td class="indent">'+esc(CHART[code].name)+'</td><td class="num">'+fmt(t.balance)+'</td></tr>';
+    });
+    html += '<tr class="total-row"><td>Total revenue</td><td class="num">'+fmt(revTotal)+'</td></tr>';
+
+    html += '<tr class="section-row"><td colspan="2">Expenses</td></tr>';
+    ACCOUNT_ORDER.forEach(function(code){
+      if(CHART[code].type!=="expense") return;
+      var t = accountTotals(code, start, end);
+      if(!t.debit && !t.credit) return;
+      expTotal += t.balance;
+      html += '<tr><td class="indent">'+esc(CHART[code].name)+'</td><td class="num">'+fmt(t.balance)+'</td></tr>';
+    });
+    html += '<tr class="total-row"><td>Total expenses</td><td class="num">'+fmt(expTotal)+'</td></tr>';
+    html += '<tr class="total-row"><td style="font-size:1.05rem;">Net income</td><td class="num" style="font-size:1.05rem;">'+fmt(revTotal-expTotal)+'</td></tr>';
+    html += '</tbody></table></div>';
+    html += '<div class="note">Net income here reflects revenue when it was <em>earned</em> (invoiced) and expenses when they were <em>incurred</em> — not simply cash in versus cash out. An unpaid invoice still counts as revenue; an unpaid bill still counts as an expense.</div>';
+    return html;
+  }
+
+  /* ============================== UI: BALANCE SHEET ============================== */
+  function viewBalanceSheet(){
+    var qp = route.params;
+    var asOf = qp.asof || todayISO();
+    var html = '<div class="pagehead"><div><h1>Balance Sheet</h1><div class="sub">What the business owns, owes, and is worth, as at a chosen date.</div></div></div>';
+    html += '<div class="card"><form id="asofForm" class="inline"><div class="field" style="margin:0;"><label>As at</label><input type="date" id="bsAsOf" value="'+asOf+'"></div><button class="btn btn-ghost" type="submit" style="margin-top:20px;">Update</button></form></div>';
+
+    var bank = accountTotals("1000", null, asOf).balance;
+    var ar = accountTotals("1100", null, asOf).balance;
+    var assets = bank + ar;
+    var ap = accountTotals("2000", null, asOf).balance;
+    var vatp = accountTotals("2100", null, asOf).balance;
+    var liabilities = ap + vatp;
+    var capital = accountTotals("3000", null, asOf).balance;
+    var retained = netIncome(null, asOf);
+    var equity = capital + retained;
+
+    html += '<div class="card"><table class="list statement-table"><tbody>';
+    html += '<tr class="section-row"><td colspan="2">Assets</td></tr>';
+    html += '<tr><td class="indent">Bank</td><td class="num">'+fmt(bank)+'</td></tr>';
+    html += '<tr><td class="indent">Accounts Receivable</td><td class="num">'+fmt(ar)+'</td></tr>';
+    html += '<tr class="total-row"><td>Total assets</td><td class="num">'+fmt(assets)+'</td></tr>';
+
+    html += '<tr class="section-row"><td colspan="2">Liabilities</td></tr>';
+    html += '<tr><td class="indent">Accounts Payable</td><td class="num">'+fmt(ap)+'</td></tr>';
+    html += '<tr><td class="indent">VAT Payable</td><td class="num">'+fmt(vatp)+'</td></tr>';
+    html += '<tr class="total-row"><td>Total liabilities</td><td class="num">'+fmt(liabilities)+'</td></tr>';
+
+    html += '<tr class="section-row"><td colspan="2">Equity</td></tr>';
+    html += '<tr><td class="indent">Owner\'s Capital (contributions less drawings)</td><td class="num">'+fmt(capital)+'</td></tr>';
+    html += '<tr><td class="indent">Retained Earnings (cumulative net income)</td><td class="num">'+fmt(retained)+'</td></tr>';
+    html += '<tr class="total-row"><td>Total equity</td><td class="num">'+fmt(equity)+'</td></tr>';
+
+    html += '<tr class="total-row"><td style="font-size:1.05rem;">Total liabilities + equity</td><td class="num" style="font-size:1.05rem;">'+fmt(liabilities+equity)+'</td></tr>';
+    html += '</tbody></table></div>';
+
+    var balanced = assets === (liabilities+equity);
+    html += '<div class="balcheck '+(balanced?"ok":"bad")+'">'+(balanced? "&#10003; Balanced — Assets = Liabilities + Equity" : "&#10007; Out of balance")+'</div>';
+    html += '<div class="note" style="margin-top:14px;">Retained Earnings is the running total of every invoice and cash sale recorded as revenue, less every expense recorded, from the start of the books to '+fmtDate(asOf)+'. It rolls forward automatically — nothing to close off manually.</div>';
+    return html;
+  }
+
+  /* ============================== UI: SETTINGS ============================== */
+  function viewSettings(){
+    var html = '<div class="pagehead"><div><h1>Settings</h1></div></div>';
+    html += '<div class="card"><h3>VAT</h3><form id="vatForm">';
+    html += '<div class="field"><label><input type="checkbox" id="vatEnabled" '+(state.settings.vatEnabled?"checked":"")+' style="width:auto;margin-right:8px;">This business is VAT registered</label>' +
+      '<div class="hint">When on, VAT is added to every invoice and cash sale, and tracked in a VAT Payable account. Leave off if not VAT-registered — most small businesses below the SARS threshold aren\'t.</div></div>';
+    html += '<div class="field"><label>VAT rate (%)</label><input type="number" id="vatRate" value="'+state.settings.vatRate+'" style="width:120px;"></div>';
+    html += '<button type="submit" class="btn btn-gold">Save</button>';
+    html += '</form></div>';
+
+    html += '<div class="card"><h3>Opening balances</h3>';
+    if(state.settings.openingDone){
+      html += '<div class="note">Opening balances have already been set. To change them, add a manual adjustment via Owner Contribution/Drawing, or ask for a correcting entry.</div>';
+    } else {
+      html += '<div class="hint" style="margin-bottom:14px;">If you\'re starting mid-year with existing cash, unpaid client invoices, or unpaid supplier bills, enter them here once — Owner\'s Capital is calculated automatically so the books balance from day one.</div>';
+      html += '<form id="openingForm"><div class="grid3">';
+      html += '<div class="field"><label>Bank balance</label><input type="text" inputmode="decimal" id="opBank" placeholder="0.00"></div>';
+      html += '<div class="field"><label>Owed by clients (A/R)</label><input type="text" inputmode="decimal" id="opAr" placeholder="0.00"></div>';
+      html += '<div class="field"><label>Owed to suppliers (A/P)</label><input type="text" inputmode="decimal" id="opAp" placeholder="0.00"></div>';
+      html += '</div><div class="field"><label>As at</label><input type="date" id="opDate" value="'+todayISO()+'"></div>';
+      html += '<button type="submit" class="btn btn-gold">Post opening balances</button></form>';
+    }
+    html += '</div>';
+
+    html += '<div class="card"><h3>Company details</h3><table class="list"><tbody>' +
+      '<tr><td>Name</td><td>'+esc(COMPANY.name)+'</td></tr>' +
+      '<tr><td>Address</td><td>'+esc(COMPANY.address)+'</td></tr>' +
+      '<tr><td>Phone</td><td>'+esc(COMPANY.phone)+'</td></tr>' +
+      '<tr><td>Email</td><td>'+esc(COMPANY.email)+'</td></tr>' +
+      '<tr><td>Reg. No.</td><td>'+esc(COMPANY.reg)+'</td></tr>' +
+      '</tbody></table><div class="hint" style="margin-top:10px;">These appear on every invoice and receipt. To change them, ask for an update.</div></div>';
+    return html;
+  }
+
+  /* ============================== TOASTS ============================== */
+  function toast(msg, isError){
+    var t = document.createElement("div");
+    t.textContent = msg;
+    t.style.cssText = "position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:999;padding:12px 20px;border-radius:4px;font-size:0.88rem;font-weight:600;box-shadow:0 10px 30px rgba(0,0,0,0.25);";
+    t.style.background = isError ? "#B5442E" : "#1B3358";
+    t.style.color = "#fff";
+    document.body.appendChild(t);
+    setTimeout(function(){ t.remove(); }, 3200);
+  }
+
+  /* ============================== RENDER / EVENT BINDING ============================== */
+  function render(){
+    var appEl = document.getElementById("app");
+    if(state.dbUnavailable){
+      appEl.innerHTML = '<div class="main" style="margin:0 auto;"><div class="setup-gate card"><h1 style="margin-bottom:10px;">Accounts not configured yet</h1><p class="muted">Add your Supabase project URL and anon key at the top of this file\'s script (SUPABASE_URL / SUPABASE_ANON_KEY), then reload. See the README for the exact steps.</p></div></div>';
+      return;
+    }
+    if(!state.session){
+      appEl.innerHTML = '<div class="main" style="margin:0 auto;"><div class="setup-gate card">' +
+        '<img src="'+LOGO+'" alt="" style="height:32px;margin-bottom:18px;">' +
+        '<h1 style="margin-bottom:6px;">Sign in</h1><p class="muted" style="margin-bottom:20px;">Pime Engineering Accounts — authorised access only.</p>' +
+        '<form id="loginForm">' +
+        '<div class="field"><label>Email</label><input type="email" id="loginEmail" required></div>' +
+        '<div class="field"><label>Password</label><input type="password" id="loginPassword" required></div>' +
+        '<div id="loginError" class="small" style="color:var(--red);margin-bottom:10px;"></div>' +
+        '<button type="submit" class="btn btn-gold" id="loginBtn">Sign in</button>' +
+        '</form></div></div>';
+      var lf = document.getElementById("loginForm");
+      lf.addEventListener("submit", async function(e){
+        e.preventDefault();
+        var btn = document.getElementById("loginBtn");
+        var errEl = document.getElementById("loginError");
+        btn.disabled = true; btn.textContent = "Signing in…";
+        try{
+          await signIn(document.getElementById("loginEmail").value, document.getElementById("loginPassword").value);
+        }catch(err){
+          errEl.textContent = err.message || "Could not sign in.";
+          btn.disabled = false; btn.textContent = "Sign in";
+        }
+      });
+      return;
+    }
+    if(!allLoaded()){
+      appEl.innerHTML = '<div class="main" style="margin:0 auto;text-align:center;padding-top:120px;color:var(--steel);">Loading your books&hellip;</div>';
+      return;
+    }
+
+    var needsOpening = !state.settings.openingDone && state.journal.length===0 && route.view!=="settings";
+    var body = "";
+    switch(route.view){
+      case "dashboard": body = viewDashboard(); break;
+      case "invoice-new": body = viewInvoiceNew(); break;
+      case "invoices": body = viewInvoices(); break;
+      case "invoice-view": body = viewInvoiceDoc(route.params.id); break;
+      case "receipt-new": body = viewReceiptNew(); break;
+      case "receipts": body = viewReceipts(); break;
+      case "receipt-view": body = viewReceiptDoc(route.params.id); break;
+      case "expense-new": body = viewExpenseNew(); break;
+      case "expenses": body = viewExpenses(); break;
+      case "payable-pay": body = viewPayablePay(); break;
+      case "owner-tx": body = viewOwnerTx(); break;
+      case "journal": body = viewJournal(); break;
+      case "ledger": body = viewLedger(); break;
+      case "trial-balance": body = viewTrialBalance(); break;
+      case "income-statement": body = viewIncomeStatement(); break;
+      case "balance-sheet": body = viewBalanceSheet(); break;
+      case "settings": body = viewSettings(); break;
+      default: body = viewDashboard();
+    }
+
+    var banner = "";
+    if(needsOpening){
+      banner = '<div class="note" style="margin-bottom:20px;">New here? If you have existing cash or outstanding invoices/bills, set them up once in <a href="#settings" style="color:var(--gold);font-weight:700;">Settings &rarr; Opening balances</a>. Otherwise just start issuing invoices below.</div>';
+    }
+
+    appEl.innerHTML = mobTopHtml() + sidebarHtml() + '<div class="main">' + banner + body + '</div>';
+    bindEvents();
+  }
+
+  function bindEvents(){
+    var mobBtn = document.getElementById("mobMenuBtn");
+    if(mobBtn) mobBtn.addEventListener("click", function(){ document.getElementById("sidebar").classList.toggle("open"); });
+
+    var signOutBtn = document.getElementById("signOutBtn");
+    if(signOutBtn) signOutBtn.addEventListener("click", function(){ signOut(); });
+
+    // Invoice form
+    var invForm = document.getElementById("invoiceForm");
+    if(invForm){
+      function refreshInvoiceView(){
+        var wrap = document.getElementById("lineItemsWrap");
+        wrap.innerHTML = lineItemsHtml(invoiceDraft.lines);
+        bindLineItemEvents("lineItemsWrap", invoiceDraft.lines, refreshInvoiceView);
+        var subtotal=0; invoiceDraft.lines.forEach(function(l){subtotal+=l.amount;});
+        var vat = state.settings.vatEnabled? Math.round(subtotal*state.settings.vatRate/100):0;
+        // re-render totals without full page reload: quick patch
+        var totalsBlock = invForm.querySelectorAll(".card")[1].querySelector('div[style*="flex-end"]');
+        if(totalsBlock){
+          var total = subtotal+vat;
+          var inner = '<div style="width:260px;">' +
+            '<div class="inline" style="justify-content:space-between;"><span>Subtotal</span><strong>'+fmt(subtotal)+'</strong></div>' +
+            (state.settings.vatEnabled? '<div class="inline" style="justify-content:space-between;"><span>VAT ('+state.settings.vatRate+'%)</span><strong>'+fmt(vat)+'</strong></div>':'') +
+            '<div class="inline" style="justify-content:space-between;border-top:2px solid var(--navy);padding-top:6px;margin-top:6px;"><span>Total</span><strong style="font-size:1.15rem;">'+fmt(total)+'</strong></div></div>';
+          totalsBlock.innerHTML = inner;
+        }
+        var preview = document.getElementById("postingPreview");
+        if(preview){
+          preview.innerHTML = 'On save, this posts: <strong>Debit</strong> Accounts Receivable '+fmt(total)+'; <strong>Credit</strong> Sales Revenue '+fmt(subtotal)+(vat? '; <strong>Credit</strong> VAT Payable '+fmt(vat):'')+'.';
+        }
+      }
+      bindLineItemEvents("lineItemsWrap", invoiceDraft.lines, refreshInvoiceView);
+      document.getElementById("addLineBtn").addEventListener("click", function(){
+        invoiceDraft.lines.push(emptyLine());
+        refreshInvoiceView();
+      });
+      document.getElementById("invClient").addEventListener("input", function(e){ invoiceDraft.client = e.target.value; });
+      document.getElementById("invContact").addEventListener("input", function(e){ invoiceDraft.clientContact = e.target.value; });
+      document.getElementById("invDate").addEventListener("input", function(e){ invoiceDraft.date = e.target.value; });
+      document.getElementById("invDue").addEventListener("input", function(e){ invoiceDraft.dueDate = e.target.value; });
+      invForm.addEventListener("submit", async function(e){
+        e.preventDefault();
+        if(!invoiceDraft.client){ toast("Please enter a client name.", true); return; }
+        var validLines = invoiceDraft.lines.filter(function(l){ return l.desc && l.amount; });
+        if(!validLines.length){ toast("Add at least one line item with a description and price.", true); return; }
+        var btn = document.getElementById("invoiceSubmitBtn");
+        btn.disabled = true; btn.textContent = "Saving…";
+        try{
+          var number = await createInvoice(Object.assign({}, invoiceDraft, {lines: validLines}));
+          toast("Invoice " + number + " issued.");
+          invoiceDraft = null;
+          location.hash = "invoices";
+        }catch(err){ toast(err.message || "Could not save invoice.", true); btn.disabled=false; btn.textContent="Save & issue invoice"; }
+      });
+    }
+
+    // Pay invoice form
+    var payForm = document.getElementById("payInvoiceForm");
+    if(payForm){
+      payForm.addEventListener("submit", async function(e){
+        e.preventDefault();
+        var invId = document.getElementById("payInvoiceSelect").value;
+        var invoice = state.invoices.filter(function(i){return i.id===invId;})[0];
+        var amount = toCents(document.getElementById("payAmount").value);
+        var date = document.getElementById("payDate").value || todayISO();
+        var method = document.getElementById("payMethod").value;
+        if(!amount){ toast("Enter an amount.", true); return; }
+        try{
+          var number = await recordInvoicePayment(invoice, amount, date, method);
+          toast("Receipt " + number + " recorded.");
+          location.hash = "receipts";
+        }catch(err){ toast(err.message||"Could not record payment.", true); }
+      });
+    }
+
+    // Cash sale form
+    var csForm = document.getElementById("cashSaleForm");
+    if(csForm){
+      csForm.addEventListener("submit", async function(e){
+        e.preventDefault();
+        var amount = toCents(document.getElementById("csAmount").value);
+        if(!amount){ toast("Enter an amount.", true); return; }
+        var form = {
+          client: document.getElementById("csClient").value,
+          date: document.getElementById("csDate").value || todayISO(),
+          method: document.getElementById("csMethod").value,
+          lines: [{desc: document.getElementById("csDesc").value, qty:1, unitPrice:amount, amount:amount}]
+        };
+        try{
+          var number = await recordCashSale(form);
+          toast("Receipt " + number + " recorded.");
+          location.hash = "receipts";
+        }catch(err){ toast(err.message||"Could not record sale.", true); }
+      });
+    }
+
+    // Expense form
+    var expForm = document.getElementById("expenseForm");
+    if(expForm){
+      expForm.addEventListener("submit", async function(e){
+        e.preventDefault();
+        var amount = toCents(document.getElementById("expAmount").value);
+        if(!amount){ toast("Enter an amount.", true); return; }
+        var form = {
+          category: document.getElementById("expCategory").value,
+          payee: document.getElementById("expPayee").value,
+          amount: amount,
+          date: document.getElementById("expDate").value || todayISO(),
+          paidVia: document.getElementById("expPaidVia").value,
+          memo: document.getElementById("expMemo").value
+        };
+        try{
+          var number = await recordExpense(form);
+          toast("Expense " + number + " saved.");
+          location.hash = "expenses";
+        }catch(err){ toast(err.message||"Could not save expense.", true); }
+      });
+    }
+
+    // Pay payable form
+    var ppForm = document.getElementById("payPayableForm");
+    if(ppForm){
+      ppForm.addEventListener("submit", async function(e){
+        e.preventDefault();
+        var amount = toCents(document.getElementById("ppAmount").value);
+        if(!amount){ toast("Enter an amount.", true); return; }
+        var form = { payee: document.getElementById("ppPayee").value, amount: amount, date: document.getElementById("ppDate").value || todayISO() };
+        try{ await payPayable(form); toast("Payment recorded."); location.hash = "journal"; }
+        catch(err){ toast(err.message||"Could not record payment.", true); }
+      });
+    }
+
+    // Owner tx form
+    var otForm = document.getElementById("ownerTxForm");
+    if(otForm){
+      otForm.addEventListener("submit", async function(e){
+        e.preventDefault();
+        var amount = toCents(document.getElementById("otAmount").value);
+        if(!amount){ toast("Enter an amount.", true); return; }
+        var kind = document.getElementById("otKind").value;
+        var date = document.getElementById("otDate").value || todayISO();
+        var memo = document.getElementById("otMemo").value;
+        try{ await ownerTransaction(kind, amount, date, memo); toast("Saved."); location.hash = "journal"; }
+        catch(err){ toast(err.message||"Could not save.", true); }
+      });
+    }
+
+    // Settings: VAT
+    var vatForm = document.getElementById("vatForm");
+    if(vatForm){
+      vatForm.addEventListener("submit", async function(e){
+        e.preventDefault();
+        var enabled = document.getElementById("vatEnabled").checked;
+        var rate = parseFloat(document.getElementById("vatRate").value)||15;
+        try{ await saveSettings({vatEnabled:enabled, vatRate:rate}); toast("Settings saved."); }
+        catch(err){ toast(err.message||"Could not save settings.", true); }
+      });
+    }
+
+    // Settings: opening balances
+    var openForm = document.getElementById("openingForm");
+    if(openForm){
+      openForm.addEventListener("submit", async function(e){
+        e.preventDefault();
+        var form = {
+          bank: toCents(document.getElementById("opBank").value),
+          ar: toCents(document.getElementById("opAr").value),
+          ap: toCents(document.getElementById("opAp").value),
+          date: document.getElementById("opDate").value || todayISO()
+        };
+        try{ await postOpeningBalances(form); toast("Opening balances posted."); location.hash = "dashboard"; }
+        catch(err){ toast(err.message||"Could not post opening balances.", true); }
+      });
+    }
+
+    // Period filter forms
+    var periodForm = document.getElementById("periodForm");
+    if(periodForm){
+      periodForm.addEventListener("submit", function(e){
+        e.preventDefault();
+        var s = document.getElementById("isStart").value, en = document.getElementById("isEnd").value;
+        location.hash = "income-statement?start="+s+"&end="+en;
+      });
+    }
+    var asofForm = document.getElementById("asofForm");
+    if(asofForm){
+      asofForm.addEventListener("submit", function(e){
+        e.preventDefault();
+        var a = document.getElementById("bsAsOf").value;
+        location.hash = "balance-sheet?asof="+a;
+      });
+    }
+  }
+
+  /* ============================== BOOT ============================== */
+  parseHash();
+  initAuth();
+})();
+</script>
+</body>
+</html>
