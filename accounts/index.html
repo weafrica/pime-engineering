@@ -550,7 +550,7 @@
 
   function sidebarHtml(){
     var html = '<div class="sidebar" id="sidebar">';
-    html += '<div class="brand"><img src="'+LOGO+'" alt=""><div class="t">Pime Engineering<small>ACCOUNTS</small></div></div>';
+    html += '<div class="brand"><span style="background:var(--paper);padding:5px 8px;border-radius:3px;display:flex;align-items:center;"><img src="'+LOGO+'" alt="" style="height:26px;"></span><div class="t">Pime Engineering<small>ACCOUNTS</small></div></div>';
     NAV.forEach(function(g){
       html += '<div class="navgroup"><div class="lbl">'+g.group.toUpperCase()+'</div>';
       g.items.forEach(function(it){
