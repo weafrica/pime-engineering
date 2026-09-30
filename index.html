@@ -11,17 +11,18 @@
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --navy:#1B3358;
-    --navy-dark:#0F1E33;
-    --gold:#B3872C;
-    --gold-light:#D9A94A;
-    --cream:#EFE6D1;
-    --paper:#F6EEDC;
-    --ink:#1D2128;
+    --navy:#132A47;
+    --navy-dark:#0A1526;
+    --gold:#9C7A35;
+    --gold-light:#C9A15C;
+    --graphite:#3D4551;
+    --cream:#EDE7D8;
+    --paper:#F5F0E3;
+    --ink:#1B1F26;
     --steel:#5C6672;
-    --line:#E2DAC4;
+    --line:#DFD6BE;
     --radius:2px;
-    --maxw:1180px;
+    --maxw:1220px;
   }
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
@@ -88,8 +89,8 @@
     color:var(--navy);
     margin-bottom:8px;
   }
-  :root[data-theme="dark"] .kicker, :root:not([data-theme="light"]) .kicker { color: var(--gold-light); }
-  @media (prefers-color-scheme: light){ :root:not([data-theme="dark"]) .kicker{ color: var(--navy);} }
+  :root[data-theme="dark"] .kicker { color: var(--gold-light); }
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .kicker{ color: var(--gold-light);} }
   .kicker::before{
     content:"";
     width:11px;height:11px;
@@ -153,7 +154,7 @@
   .btn-outline{border-color:#4C5A73;color:#E9E3D2;background:transparent;}
   .btn-outline:hover{border-color:var(--gold-light);color:var(--gold-light);}
   .btn-ink{border-color:var(--navy);color:var(--navy);background:transparent;}
-  :root[data-theme="dark"] .btn-ink, :root:not([data-theme="light"]) .btn-ink{border-color:var(--gold-light); color:var(--gold-light);}
+  :root[data-theme="dark"] .btn-ink{border-color:var(--gold-light); color:var(--gold-light);}
   .btn-ink:hover{background:var(--navy);color:#fff;}
 
   .hamburger{display:none;background:none;border:0;color:#E9E3D2;padding:8px;cursor:pointer;}
@@ -185,17 +186,18 @@
     padding-bottom:64px;
   }
   .hero h1{
-    font-size:clamp(2.1rem, 4vw, 3.1rem);
-    line-height:1.12;
-    max-width:15ch;
+    font-size:clamp(2.5rem, 4.6vw, 3.9rem);
+    line-height:1.08;
+    max-width:16ch;
+    letter-spacing:-0.01em;
   }
   .hero .lede{
-    margin-top:22px;
-    font-size:1.08rem;
+    margin-top:24px;
+    font-size:1.14rem;
     color:var(--steel);
     max-width:46ch;
   }
-  .hero .ctas{display:flex;gap:14px;margin-top:32px;flex-wrap:wrap;}
+  .hero .ctas{display:flex;gap:14px;margin-top:36px;flex-wrap:wrap;}
   .hero-figure{
     position:relative;
     opacity:0;
@@ -205,26 +207,19 @@
   @keyframes riseIn{to{opacity:1;transform:translateY(0);}}
   .hero-figure .frame{
     position:relative;
-    background:var(--navy-dark);
-    padding:14px;
-    transform:rotate(-1.4deg);
-    box-shadow:0 22px 46px -18px rgba(15,30,51,0.55);
+    border-top:3px solid var(--gold);
+    box-shadow:0 30px 60px -24px rgba(10,21,38,0.45);
   }
-  .hero-figure img{width:100%;height:340px;object-fit:cover;display:block;}
-  .corner{position:absolute;width:22px;height:22px;border-color:var(--gold-light);border-style:solid;border-width:0;}
-  .corner.tl{top:6px;left:6px;border-top-width:2px;border-left-width:2px;}
-  .corner.br{bottom:6px;right:6px;border-bottom-width:2px;border-right-width:2px;}
-  .hero-figure .tag{
-    position:absolute;left:-14px;bottom:-18px;
-    background:var(--gold);
-    color:#241B08;
-    font-family:"Oswald", sans-serif;
-    font-size:0.8rem;
-    font-weight:600;
-    padding:9px 16px;
-    letter-spacing:0.03em;
-    box-shadow:0 8px 18px -8px rgba(0,0,0,0.4);
+  .hero-figure img{width:100%;height:400px;object-fit:cover;display:block;}
+  .hero-figure .cap{
+    display:flex;justify-content:space-between;align-items:baseline;
+    padding:14px 2px 0;
+    font-family:"Oswald",sans-serif;font-size:0.82rem;letter-spacing:0.04em;
+    color:var(--steel);
   }
+  .hero-figure .cap strong{color:var(--navy);font-weight:600;}
+  :root[data-theme="dark"] .hero-figure .cap strong{color:var(--gold-light);}
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .hero-figure .cap strong{color:var(--gold-light);} }
   /* ---------- Spec strip ---------- */
   .specstrip{
     background:var(--navy);
@@ -279,10 +274,10 @@
     color:var(--gold);font-weight:600;
   }
   .mission p{margin-top:8px;color:var(--navy);font-size:1.12rem;font-weight:500;max-width:44ch;}
-  :root[data-theme="dark"] .mission p, :root:not([data-theme="light"]) .mission p{color:var(--gold-light);}
-  .about-figure{position:relative;}
-  .about-figure img{width:100%;height:420px;object-fit:cover;}
-  .about-figure .corner{border-color:var(--gold);}
+  :root[data-theme="dark"] .mission p{color:var(--gold-light);}
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .mission p{color:var(--gold-light);} }
+  .about-figure{position:relative;border-top:3px solid var(--gold);box-shadow:0 30px 60px -28px rgba(10,21,38,0.4);}
+  .about-figure img{width:100%;height:440px;object-fit:cover;display:block;}
 
   /* ---------- Services ---------- */
   .services{background:var(--paper);border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
@@ -307,8 +302,28 @@
     font-size:1.18rem;
     color:var(--navy);
   }
-  :root[data-theme="dark"] .svc-row .name, :root:not([data-theme="light"]) .svc-row .name{color:var(--gold-light);}
+  :root[data-theme="dark"] .svc-row .name{color:var(--gold-light);}
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .svc-row .name{color:var(--gold-light);} }
   .svc-row .desc{color:var(--steel);font-size:0.98rem;}
+
+  /* ---------- Process ---------- */
+  .process{background:var(--navy-dark);color:#E9E3D2;}
+  .process .kicker{color:var(--gold-light);}
+  .process .section-intro{color:#9AA4B5;}
+  .proc-list{margin-top:44px;display:grid;grid-template-columns:repeat(5,1fr);gap:0;}
+  .proc-step{position:relative;padding:0 22px 0 0;border-right:1px solid rgba(255,255,255,0.12);}
+  .proc-step:last-child{border-right:none;padding-right:0;}
+  .proc-step .n{
+    font-family:"Oswald",sans-serif;font-weight:600;font-size:0.85rem;
+    color:var(--gold-light);letter-spacing:0.08em;
+  }
+  .proc-step h3{color:#F1EEE3;font-size:1.02rem;margin-top:10px;}
+  .proc-step p{color:#9AA4B5;font-size:0.88rem;margin-top:8px;}
+  @media (max-width:980px){
+    .proc-list{grid-template-columns:1fr 1fr;gap:28px;}
+    .proc-step{border-right:none;padding-right:0;}
+  }
+  @media (max-width:560px){ .proc-list{grid-template-columns:1fr;} }
 
   /* ---------- Why us ---------- */
   .why .wrap{
@@ -322,10 +337,15 @@
   .why-photos .p1{width:72%;height:78%;top:0;left:0;}
   .why-photos .p2{width:55%;height:52%;bottom:0;right:0;border:6px solid var(--cream);}
   .why-grid{display:grid;grid-template-columns:1fr 1fr;gap:34px 40px;}
-  .why-item .num{
-    font-family:"Oswald",sans-serif;color:var(--gold);font-weight:600;font-size:0.85rem;letter-spacing:0.08em;
+  .why-item .icon{
+    width:40px;height:40px;border-radius:50%;
+    background:var(--navy);color:var(--gold-light);
+    display:flex;align-items:center;justify-content:center;flex:none;
   }
-  .why-item h3{font-size:1.18rem;margin-top:6px;}
+  :root[data-theme="dark"] .why-item .icon{background:var(--gold);color:var(--navy-dark);}
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .why-item .icon{background:var(--gold);color:var(--navy-dark);} }
+  .why-item .icon svg{width:19px;height:19px;}
+  .why-item h3{font-size:1.18rem;margin-top:14px;}
   .why-item p{color:var(--steel);margin-top:8px;font-size:0.96rem;}
 
   /* ---------- Work / gallery ---------- */
@@ -385,6 +405,19 @@
   .lightbox .lb-next{right:20px;top:50%;transform:translateY(-50%);}
   .lightbox .lb-close:hover, .lightbox .lb-prev:hover, .lightbox .lb-next:hover{border-color:var(--gold-light);}
 
+  /* ---------- CTA band ---------- */
+  .ctaband{
+    background:var(--navy);
+    border-top:3px solid var(--gold);
+    border-bottom:3px solid var(--gold);
+  }
+  .ctaband .wrap{
+    padding:56px 28px;
+    display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap;
+  }
+  .ctaband h2{color:#F1EEE3;font-size:1.7rem;max-width:26ch;}
+  .ctaband .ctas{display:flex;gap:14px;flex-wrap:wrap;}
+
   /* ---------- Contact ---------- */
   .contact{background:var(--paper);border-top:1px solid var(--line);}
   .contact .wrap{display:grid;grid-template-columns:0.85fr 1.15fr;gap:64px;}
@@ -410,7 +443,8 @@
   .quoteform .sub{color:var(--steel);margin-top:6px;font-size:0.95rem;}
   .field{margin-top:18px;}
   .field label{display:block;font-size:0.85rem;font-weight:500;color:var(--navy);margin-bottom:6px;}
-  :root[data-theme="dark"] .field label, :root:not([data-theme="light"]) .field label{color:var(--gold-light);}
+  :root[data-theme="dark"] .field label{color:var(--gold-light);}
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .field label{color:var(--gold-light);} }
   .field input, .field textarea{
     width:100%;padding:12px 14px;
     border:1px solid var(--line);
@@ -428,7 +462,7 @@
   footer{background:var(--navy-dark);color:#C9CFDA;border-top:3px solid var(--gold);}
   footer .wrap{
     padding:52px 28px 30px;
-    display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:40px;
+    display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:36px;
   }
   footer .fbrand{display:flex;align-items:center;gap:12px;}
   footer .fbrand .plate{background:var(--paper);padding:6px 12px;border-radius:var(--radius);display:flex;align-items:center;}
@@ -452,6 +486,7 @@
     .hamburger{display:inline-flex;}
     .hero .wrap{grid-template-columns:1fr;gap:40px;padding-bottom:48px;}
     .hero-figure img{height:280px;}
+    .hero-figure .cap{flex-direction:column;align-items:flex-start;gap:4px;}
     .specstrip .wrap{grid-template-columns:1fr 1fr;}
     .specitem:nth-child(3){border-left:none;}
     .specitem{border-left:1px solid rgba(255,255,255,0.12);}
@@ -496,6 +531,7 @@
     <nav class="mainnav" aria-label="Primary">
       <a href="#about">About</a>
       <a href="#services">Services</a>
+      <a href="#process">Process</a>
       <a href="#work">Our Work</a>
       <a href="#why">Why Us</a>
       <a href="#contact">Contact</a>
@@ -522,6 +558,7 @@
   </div>
   <a href="#about">About</a>
   <a href="#services">Services</a>
+  <a href="#process">Process</a>
   <a href="#work">Our Work</a>
   <a href="#why">Why Us</a>
   <a href="#contact">Contact</a>
@@ -543,10 +580,8 @@
       <div class="hero-figure">
         <div class="frame">
           <img src="images/img-004.jpg" alt="Machined crown wheel and pinion gear set">
-          <span class="corner tl"></span>
-          <span class="corner br"></span>
         </div>
-        <span class="tag">Cut to close tolerance, in-house</span>
+        <div class="cap"><span>Crown wheel &amp; pinion set</span><strong>Cut to close tolerance, in-house</strong></div>
       </div>
     </div>
   </section>
@@ -585,8 +620,6 @@
       </div>
       <div class="about-figure">
         <img src="images/img-014.jpg" alt="Precision lathe work in progress in the Pime Engineering workshop">
-        <span class="corner tl"></span>
-        <span class="corner br"></span>
       </div>
     </div>
   </section>
@@ -630,6 +663,40 @@
     </div>
   </section>
 
+  <section id="process" class="process">
+    <div class="wrap">
+      <div class="kicker">How We Work</div>
+      <p class="section-intro">From first enquiry to a finished, inspected component — the same process, every time.</p>
+      <div class="proc-list">
+        <div class="proc-step">
+          <div class="n">01</div>
+          <h3>Enquiry &amp; drawings</h3>
+          <p>Send specs, drawings or a sample part — we'll ask what we need to quote accurately.</p>
+        </div>
+        <div class="proc-step">
+          <div class="n">02</div>
+          <h3>Quotation</h3>
+          <p>A clear, itemised quote covering material, machining time and finish.</p>
+        </div>
+        <div class="proc-step">
+          <div class="n">03</div>
+          <h3>Machining &amp; fabrication</h3>
+          <p>Work is carried out in-house, on our own equipment, start to finish.</p>
+        </div>
+        <div class="proc-step">
+          <div class="n">04</div>
+          <h3>Quality check</h3>
+          <p>Every part is measured against drawing tolerance before it leaves the workshop.</p>
+        </div>
+        <div class="proc-step">
+          <div class="n">05</div>
+          <h3>Delivery</h3>
+          <p>Collected or delivered, with documentation for your records.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section id="why" class="why">
     <div class="wrap">
       <div class="why-photos">
@@ -640,22 +707,22 @@
         <div class="kicker">Why Choose Us</div>
         <div class="why-grid" style="margin-top:32px;">
           <div class="why-item">
-            <div class="num">01</div>
+            <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="0.6" fill="currentColor"/></svg></span>
             <h3>Precision Workmanship</h3>
             <p>From custom shafts to large housings and impeller components, every job is held to close tolerance.</p>
           </div>
           <div class="why-item">
-            <div class="num">02</div>
+            <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a4 4 0 0 0-5.6 5.6L2 19l3 3 7.1-7.1a4 4 0 0 0 5.6-5.6l-2.4 2.4-2-2z"/></svg></span>
             <h3>Broad Experience</h3>
             <p>Practical experience across shafts, pump components, hydraulic parts, and structural fabrication.</p>
           </div>
           <div class="why-item">
-            <div class="num">03</div>
+            <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21V10l9-6 9 6v11"/><path d="M9 21v-6h6v6"/></svg></span>
             <h3>In-House Machining</h3>
             <p>Full in-house capability means faster turnaround and tighter quality control.</p>
           </div>
           <div class="why-item">
-            <div class="num">04</div>
+            <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
             <h3>Reliable Service</h3>
             <p>Quality-driven service from quotation through to completion, every time.</p>
           </div>
@@ -721,6 +788,16 @@
 <figure class="shot" data-cat="pumps"><img loading="lazy" src="images/img-039.jpg" alt="C5 pump"><figcaption>C5 pump</figcaption></figure>
 <figure class="shot" data-cat="pumps"><img loading="lazy" src="images/img-040.jpg" alt="RNE pump"><figcaption>RNE pump</figcaption></figure>
 <figure class="shot" data-cat="pumps"><img loading="lazy" src="images/img-041.jpg" alt="Vertical spindle pump"><figcaption>Vertical spindle pump</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="ctaband">
+    <div class="wrap">
+      <h2>Have a component that needs machining, fabricating or repairing?</h2>
+      <div class="ctas">
+        <a class="btn btn-gold" href="#contact">Request a quote</a>
+        <a class="btn btn-outline" href="tel:+27759097129">Call 075 909 7129</a>
       </div>
     </div>
   </section>
@@ -800,10 +877,20 @@
       <p class="tag">Precision mechanical engineering — machining, fabrication and plant maintenance for industrial clients across Gauteng.</p>
     </div>
     <div>
-      <h4>NAVIGATE</h4>
+      <h4>SERVICES</h4>
+      <ul>
+        <li><a href="#services">Mechanical Engineering</a></li>
+        <li><a href="#services">Metal Fabrication &amp; Welding</a></li>
+        <li><a href="#services">Precision Machining</a></li>
+        <li><a href="#services">Plant Maintenance</a></li>
+        <li><a href="#services">Equipment Repairs</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>COMPANY</h4>
       <ul>
         <li><a href="#about">About</a></li>
-        <li><a href="#services">Services</a></li>
+        <li><a href="#process">How We Work</a></li>
         <li><a href="#work">Our Work</a></li>
         <li><a href="#why">Why Us</a></li>
         <li><a href="#contact">Contact</a></li>
