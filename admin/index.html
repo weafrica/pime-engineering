@@ -1,0 +1,570 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Site Content Editor — Pime Engineering</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/supabase-js/2.45.4/umd/supabase.min.js"></script>
+<style>
+  :root{
+    --navy:#132A47; --navy-dark:#0A1526; --gold:#9C7A35; --gold-light:#C9A15C;
+    --ink:#1B1F26; --steel:#5C6672; --line:#E2DCCB; --cream:#F5F0E3; --paper:#FFFFFF;
+    --good:#2E7D4F; --bad:#B3402C;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; font-family:"Segoe UI", -apple-system, Arial, sans-serif;
+    background:var(--cream); color:var(--ink); padding-bottom:60px;
+  }
+  header{
+    background:var(--navy-dark); color:#fff; padding:18px 24px;
+    display:flex; align-items:center; justify-content:space-between;
+    position:sticky; top:0; z-index:10; border-bottom:3px solid var(--gold);
+  }
+  header h1{font-size:1.15rem; margin:0; font-weight:600;}
+  header .sub{font-size:0.8rem; color:#9AA4B5; margin-top:2px;}
+  #logoutBtn{
+    background:transparent; border:1px solid #4C5A73; color:#E9E3D2;
+    padding:8px 14px; border-radius:4px; cursor:pointer; font-size:0.85rem;
+  }
+  #logoutBtn:hover{border-color:var(--gold-light); color:var(--gold-light);}
+
+  .wrap{max-width:920px; margin:0 auto; padding:28px 20px;}
+
+  /* ---- Login screen ---- */
+  #loginScreen{
+    max-width:380px; margin:90px auto; background:var(--paper);
+    border:1px solid var(--line); border-radius:8px; padding:36px 32px;
+    box-shadow:0 20px 50px -24px rgba(10,21,38,0.25);
+  }
+  #loginScreen h2{margin:0 0 6px; font-size:1.3rem;}
+  #loginScreen p{color:var(--steel); font-size:0.9rem; margin:0 0 24px;}
+  .field{margin-bottom:16px;}
+  .field label{display:block; font-size:0.85rem; font-weight:600; margin-bottom:6px; color:var(--navy);}
+  .field input, .field textarea, .field select{
+    width:100%; padding:10px 12px; border:1px solid var(--line); border-radius:5px;
+    font-size:0.95rem; font-family:inherit; background:#fff; color:var(--ink);
+  }
+  .field input:focus, .field textarea:focus, .field select:focus{outline:2px solid var(--gold-light); outline-offset:1px;}
+  .field textarea{resize:vertical; min-height:70px;}
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:6px;
+    padding:11px 20px; border-radius:5px; border:0; font-size:0.92rem; font-weight:600;
+    cursor:pointer; font-family:inherit;
+  }
+  .btn-primary{background:var(--navy); color:#fff;}
+  .btn-primary:hover{background:var(--navy-dark);}
+  .btn-gold{background:var(--gold); color:#241B08;}
+  .btn-gold:hover{background:var(--gold-light);}
+  .btn-ghost{background:transparent; border:1px solid var(--line); color:var(--steel);}
+  .btn-ghost:hover{border-color:var(--bad); color:var(--bad);}
+  .btn:disabled{opacity:0.55; cursor:not-allowed;}
+  .btn-block{width:100%;}
+  #loginErr{color:var(--bad); font-size:0.85rem; margin-top:10px; display:none;}
+
+  /* ---- Dashboard ---- */
+  #dash{display:none;}
+  .card{
+    background:var(--paper); border:1px solid var(--line); border-radius:8px;
+    padding:26px 26px 22px; margin-bottom:22px;
+  }
+  .card h2{font-size:1.15rem; margin:0 0 4px; color:var(--navy);}
+  .card .hint{color:var(--steel); font-size:0.85rem; margin:0 0 20px;}
+  .row2{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  @media (max-width:640px){ .row2{grid-template-columns:1fr;} }
+
+  .imgpick{display:flex; align-items:center; gap:16px; margin-bottom:18px;}
+  .imgpick img{
+    width:90px; height:90px; object-fit:cover; border-radius:6px; border:1px solid var(--line);
+    background:#f2f2f2;
+  }
+  .imgpick .meta{flex:1;}
+  .imgpick input[type=file]{font-size:0.82rem;}
+  .savebar{display:flex; align-items:center; gap:14px; margin-top:18px;}
+  .savemsg{font-size:0.85rem; color:var(--good); display:none;}
+  .savemsg.err{color:var(--bad);}
+
+  .reptbl{width:100%;}
+  .reprow{
+    display:grid; grid-template-columns:1fr 1fr auto; gap:12px; align-items:start;
+    padding:14px 0; border-bottom:1px solid var(--line);
+  }
+  .reprow:last-child{border-bottom:0;}
+  .reprow .del{
+    background:none; border:0; color:var(--bad); cursor:pointer; font-size:1.3rem;
+    line-height:1; padding:4px 8px; align-self:center;
+  }
+  .addrow-btn{margin-top:10px;}
+
+  /* ---- Gallery grid ---- */
+  .gal-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:14px; margin-top:4px;}
+  .gal-card{
+    border:1px solid var(--line); border-radius:6px; overflow:hidden; background:#fafaf7;
+  }
+  .gal-card img{width:100%; height:100px; object-fit:cover; display:block; background:#eee;}
+  .gal-card .gc-body{padding:10px;}
+  .gal-card input, .gal-card select{
+    width:100%; font-size:0.8rem; padding:6px 8px; margin-bottom:6px;
+    border:1px solid var(--line); border-radius:4px;
+  }
+  .gal-card .gc-actions{display:flex; gap:6px; margin-top:4px;}
+  .gal-card .gc-actions button{flex:1; font-size:0.76rem; padding:6px;}
+  .gal-add-card{
+    border:2px dashed var(--line); border-radius:6px; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; min-height:180px; color:var(--steel);
+    cursor:pointer; font-size:0.85rem; text-align:center; padding:12px;
+  }
+  .gal-add-card:hover{border-color:var(--gold); color:var(--gold);}
+  .gal-add-card input{display:none;}
+  .gal-add-card .plus{font-size:1.8rem; line-height:1; margin-bottom:6px;}
+
+  .spinner{
+    width:16px; height:16px; border:2px solid rgba(255,255,255,0.4); border-top-color:#fff;
+    border-radius:50%; animation:spin 0.7s linear infinite; display:inline-block;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .toast{
+    position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+    background:var(--navy-dark); color:#fff; padding:13px 22px; border-radius:6px;
+    font-size:0.9rem; box-shadow:0 10px 30px -10px rgba(0,0,0,0.5);
+    opacity:0; pointer-events:none; transition:opacity 0.25s ease; z-index:50;
+    border-left:4px solid var(--good);
+  }
+  .toast.show{opacity:1;}
+  .toast.err{border-left-color:var(--bad);}
+  .viewlink{font-size:0.85rem; color:var(--gold-light);}
+</style>
+</head>
+<body>
+
+<div id="loginScreen">
+  <h2>Site Content Editor</h2>
+  <p>Log in with your Pime Engineering admin account to edit the website.</p>
+  <div class="field">
+    <label>Email</label>
+    <input type="email" id="loginEmail" autocomplete="username">
+  </div>
+  <div class="field">
+    <label>Password</label>
+    <input type="password" id="loginPass" autocomplete="current-password">
+  </div>
+  <button class="btn btn-primary btn-block" id="loginBtn">Log in</button>
+  <div id="loginErr"></div>
+</div>
+
+<header style="display:none;" id="hdr">
+  <div>
+    <h1>Pime Engineering — Site Content Editor</h1>
+    <div class="sub">Changes go live on the website within a minute of saving.</div>
+  </div>
+  <div style="display:flex; gap:10px; align-items:center;">
+    <a class="viewlink" href="/" target="_blank">View live site ↗</a>
+    <button id="logoutBtn">Log out</button>
+  </div>
+</header>
+
+<div class="wrap" id="dash">
+
+  <div class="card">
+    <h2>Logo</h2>
+    <p class="hint">Used in the header, footer and on printed invoices/receipts in the Accounts app.</p>
+    <div class="imgpick">
+      <img id="logoPreview" src="" alt="">
+      <div class="meta">
+        <input type="file" id="logoFile" accept="image/png,image/jpeg,image/webp,image/svg+xml">
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Hero Section</h2>
+    <p class="hint">The large banner at the top of the homepage.</p>
+    <div class="field">
+      <label>Headline</label>
+      <textarea id="heroHeadline"></textarea>
+    </div>
+    <div class="field">
+      <label>Subtext</label>
+      <textarea id="heroSub"></textarea>
+    </div>
+    <div class="imgpick">
+      <img id="heroImgPreview" src="" alt="">
+      <div class="meta">
+        <label style="font-size:0.85rem;font-weight:600;color:var(--navy);display:block;margin-bottom:6px;">Hero photo</label>
+        <input type="file" id="heroFile" accept="image/png,image/jpeg,image/webp">
+      </div>
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>Caption — left</label>
+        <input type="text" id="heroCapLeft">
+      </div>
+      <div class="field">
+        <label>Caption — right</label>
+        <input type="text" id="heroCapRight">
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>About Section</h2>
+    <div class="field">
+      <label>Paragraph 1</label>
+      <textarea id="aboutP1"></textarea>
+    </div>
+    <div class="field">
+      <label>Paragraph 2</label>
+      <textarea id="aboutP2"></textarea>
+    </div>
+    <div class="field">
+      <label>Mission statement</label>
+      <textarea id="aboutMission"></textarea>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Services</h2>
+    <p class="hint">The six services listed on the homepage.</p>
+    <div id="servicesList" class="reptbl"></div>
+    <button class="btn btn-ghost addrow-btn" id="addService">+ Add service</button>
+  </div>
+
+  <div class="card">
+    <h2>Why Choose Us</h2>
+    <div id="whyList" class="reptbl"></div>
+    <button class="btn btn-ghost addrow-btn" id="addWhy">+ Add item</button>
+  </div>
+
+  <div class="card">
+    <div class="savebar">
+      <button class="btn btn-gold" id="saveTextBtn">Save all text &amp; images above</button>
+      <span class="savemsg" id="saveMsg">Saved ✓</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Gallery / Portfolio</h2>
+    <p class="hint">Photos shown in the "Our Work" section. Click a photo's details to edit, or add a new one.</p>
+    <div class="gal-grid" id="galGrid"></div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  var SUPABASE_URL = "https://rkyxzgkakiipagrznpsw.supabase.co";
+  var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJreXh6Z2tha2lpcGFncnpucHN3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAxOTczMzAsImV4cCI6MjEwNTc3MzMzMH0.ASZXz153t4hlXcMDOOkFtdSikYQVFcQTsOGlzF-3Thc";
+  var sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  var state = { data: null, gallery: [] };
+
+  function toast(msg, isErr){
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast show' + (isErr ? ' err' : '');
+    setTimeout(function(){ t.className = 'toast'; }, 3200);
+  }
+
+  // ---------- Auth ----------
+  function showLoggedIn(){
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('hdr').style.display = 'flex';
+    document.getElementById('dash').style.display = 'block';
+    loadContent();
+  }
+  function showLoggedOut(){
+    document.getElementById('loginScreen').style.display = 'block';
+    document.getElementById('hdr').style.display = 'none';
+    document.getElementById('dash').style.display = 'none';
+  }
+
+  sb.auth.getSession().then(function(res){
+    if(res.data.session) showLoggedIn(); else showLoggedOut();
+  });
+
+  document.getElementById('loginBtn').addEventListener('click', function(){
+    var email = document.getElementById('loginEmail').value.trim();
+    var pass = document.getElementById('loginPass').value;
+    var btn = this;
+    var errEl = document.getElementById('loginErr');
+    errEl.style.display = 'none';
+    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Logging in…';
+    sb.auth.signInWithPassword({ email: email, password: pass }).then(function(res){
+      btn.disabled = false; btn.textContent = 'Log in';
+      if(res.error){
+        errEl.textContent = 'Could not log in — check your email and password.';
+        errEl.style.display = 'block';
+        return;
+      }
+      showLoggedIn();
+    });
+  });
+  document.getElementById('loginPass').addEventListener('keydown', function(e){
+    if(e.key === 'Enter') document.getElementById('loginBtn').click();
+  });
+
+  document.getElementById('logoutBtn').addEventListener('click', function(){
+    sb.auth.signOut().then(function(){ showLoggedOut(); });
+  });
+
+  // ---------- Load content ----------
+  function loadContent(){
+    sb.from('site_content').select('data').eq('id', true).single().then(function(res){
+      if(res.error){ toast('Could not load site content: ' + res.error.message, true); return; }
+      state.data = res.data.data;
+      renderText();
+    });
+    sb.from('gallery_items').select('*').order('sort_order').then(function(res){
+      if(res.error){ toast('Could not load gallery: ' + res.error.message, true); return; }
+      state.gallery = res.data;
+      renderGallery();
+    });
+  }
+
+  function renderText(){
+    var d = state.data;
+    document.getElementById('logoPreview').src = d.logo_url || '../images/logo.png';
+    document.getElementById('heroImgPreview').src = d.hero_image_url || '../images/img-004.jpg';
+    document.getElementById('heroHeadline').value = d.hero_headline || '';
+    document.getElementById('heroSub').value = d.hero_sub || '';
+    document.getElementById('heroCapLeft').value = d.hero_caption_left || '';
+    document.getElementById('heroCapRight').value = d.hero_caption_right || '';
+    document.getElementById('aboutP1').value = d.about_p1 || '';
+    document.getElementById('aboutP2').value = d.about_p2 || '';
+    document.getElementById('aboutMission').value = d.mission || '';
+    renderRepeater('servicesList', d.services || [], ['code','name','desc'], ['Code (e.g. PE 01)','Title','Description']);
+    renderRepeater('whyList', d.why || [], ['title','desc'], ['Title','Description']);
+  }
+
+  function renderRepeater(containerId, items, fields, placeholders){
+    var c = document.getElementById(containerId);
+    c.innerHTML = '';
+    items.forEach(function(item, idx){
+      var row = document.createElement('div');
+      row.className = 'reprow';
+      row.style.gridTemplateColumns = fields.length === 3 ? '0.6fr 1fr 1.6fr auto' : '1fr 1.6fr auto';
+      fields.forEach(function(f, fi){
+        var inp = document.createElement(f === 'desc' ? 'textarea' : 'input');
+        if(f !== 'desc') inp.type = 'text';
+        inp.value = item[f] || '';
+        inp.placeholder = placeholders[fi];
+        inp.dataset.field = f;
+        inp.style.fontSize = '0.88rem';
+        inp.style.padding = '8px 10px';
+        inp.style.border = '1px solid var(--line)';
+        inp.style.borderRadius = '4px';
+        inp.style.width = '100%';
+        row.appendChild(inp);
+      });
+      var del = document.createElement('button');
+      del.className = 'del'; del.innerHTML = '&times;'; del.title = 'Remove';
+      del.addEventListener('click', function(){ row.remove(); });
+      row.appendChild(del);
+      c.appendChild(row);
+    });
+  }
+
+  function readRepeater(containerId, fields){
+    var rows = document.querySelectorAll('#' + containerId + ' .reprow');
+    var out = [];
+    rows.forEach(function(row){
+      var obj = {};
+      var inputs = row.querySelectorAll('[data-field]');
+      inputs.forEach(function(inp){ obj[inp.dataset.field] = inp.value.trim(); });
+      if(Object.values(obj).some(function(v){ return v; })) out.push(obj);
+    });
+    return out;
+  }
+
+  document.getElementById('addService').addEventListener('click', function(){
+    var cur = readRepeater('servicesList', ['code','name','desc']);
+    cur.push({code:'', name:'', desc:''});
+    renderRepeater('servicesList', cur, ['code','name','desc'], ['Code (e.g. PE 01)','Title','Description']);
+  });
+  document.getElementById('addWhy').addEventListener('click', function(){
+    var cur = readRepeater('whyList', ['title','desc']);
+    cur.push({title:'', desc:''});
+    renderRepeater('whyList', cur, ['title','desc'], ['Title','Description']);
+  });
+
+  // ---------- Image upload helper ----------
+  function uploadImage(file, prefix){
+    var ext = file.name.split('.').pop();
+    var path = prefix + '-' + Date.now() + '.' + ext;
+    return sb.storage.from('site-images').upload(path, file, { upsert: true }).then(function(res){
+      if(res.error) throw res.error;
+      return sb.storage.from('site-images').getPublicUrl(path).data.publicUrl;
+    });
+  }
+
+  document.getElementById('logoFile').addEventListener('change', function(e){
+    var file = e.target.files[0];
+    if(!file) return;
+    document.getElementById('logoPreview').src = URL.createObjectURL(file);
+    uploadImage(file, 'logo').then(function(url){
+      state.data.logo_url = url;
+      toast('Logo uploaded — click Save to publish it');
+    }).catch(function(err){ toast('Upload failed: ' + err.message, true); });
+  });
+  document.getElementById('heroFile').addEventListener('change', function(e){
+    var file = e.target.files[0];
+    if(!file) return;
+    document.getElementById('heroImgPreview').src = URL.createObjectURL(file);
+    uploadImage(file, 'hero').then(function(url){
+      state.data.hero_image_url = url;
+      toast('Hero photo uploaded — click Save to publish it');
+    }).catch(function(err){ toast('Upload failed: ' + err.message, true); });
+  });
+
+  // ---------- Save text/content ----------
+  document.getElementById('saveTextBtn').addEventListener('click', function(){
+    var btn = this;
+    var d = state.data;
+    d.hero_headline = document.getElementById('heroHeadline').value.trim();
+    d.hero_sub = document.getElementById('heroSub').value.trim();
+    d.hero_caption_left = document.getElementById('heroCapLeft').value.trim();
+    d.hero_caption_right = document.getElementById('heroCapRight').value.trim();
+    d.about_p1 = document.getElementById('aboutP1').value.trim();
+    d.about_p2 = document.getElementById('aboutP2').value.trim();
+    d.mission = document.getElementById('aboutMission').value.trim();
+    d.services = readRepeater('servicesList', ['code','name','desc']);
+    d.why = readRepeater('whyList', ['title','desc']);
+
+    btn.disabled = true;
+    var orig = btn.textContent;
+    btn.innerHTML = '<span class="spinner"></span> Saving…';
+    sb.from('site_content').update({ data: d, updated_at: new Date().toISOString() }).eq('id', true).then(function(res){
+      btn.disabled = false; btn.textContent = orig;
+      if(res.error){ toast('Save failed: ' + res.error.message, true); return; }
+      toast('Saved — changes are now live on the website.');
+    });
+  });
+
+  // ---------- Gallery ----------
+  var CATS = ['gears','pumps','hydraulics','conveyor'];
+  var CAT_LABELS = {gears:'Shafts & Gears', pumps:'Pumps & Impellers', hydraulics:'Hydraulics', conveyor:'Conveyor & Pulleys'};
+
+  function renderGallery(){
+    var grid = document.getElementById('galGrid');
+    grid.innerHTML = '';
+    state.gallery.forEach(function(item){
+      var card = document.createElement('div');
+      card.className = 'gal-card';
+      var img = document.createElement('img');
+      img.src = item.image_url;
+      card.appendChild(img);
+      var body = document.createElement('div');
+      body.className = 'gc-body';
+
+      var titleInp = document.createElement('input');
+      titleInp.type = 'text'; titleInp.value = item.title; titleInp.placeholder = 'Title';
+
+      var catSel = document.createElement('select');
+      CATS.forEach(function(c){
+        var opt = document.createElement('option');
+        opt.value = c; opt.textContent = CAT_LABELS[c];
+        if(c === item.category) opt.selected = true;
+        catSel.appendChild(opt);
+      });
+
+      var replaceLabel = document.createElement('label');
+      replaceLabel.style.fontSize = '0.74rem';
+      replaceLabel.style.color = 'var(--steel)';
+      replaceLabel.style.display = 'block';
+      replaceLabel.style.marginBottom = '6px';
+      replaceLabel.textContent = 'Replace photo:';
+      var fileInp = document.createElement('input');
+      fileInp.type = 'file'; fileInp.accept = 'image/png,image/jpeg,image/webp';
+      fileInp.style.fontSize = '0.74rem';
+
+      var actions = document.createElement('div');
+      actions.className = 'gc-actions';
+      var saveBtn = document.createElement('button');
+      saveBtn.className = 'btn btn-primary'; saveBtn.textContent = 'Save';
+      var delBtn = document.createElement('button');
+      delBtn.className = 'btn btn-ghost'; delBtn.textContent = 'Delete';
+
+      var pendingUrl = null;
+      fileInp.addEventListener('change', function(e){
+        var file = e.target.files[0];
+        if(!file) return;
+        img.src = URL.createObjectURL(file);
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '<span class="spinner"></span>';
+        uploadImage(file, 'gallery').then(function(url){
+          pendingUrl = url;
+          saveBtn.disabled = false; saveBtn.textContent = 'Save';
+          toast('Photo uploaded — click Save to publish it');
+        }).catch(function(err){
+          saveBtn.disabled = false; saveBtn.textContent = 'Save';
+          toast('Upload failed: ' + err.message, true);
+        });
+      });
+
+      saveBtn.addEventListener('click', function(){
+        var upd = { title: titleInp.value.trim(), category: catSel.value };
+        if(pendingUrl) upd.image_url = pendingUrl;
+        saveBtn.disabled = true;
+        sb.from('gallery_items').update(upd).eq('id', item.id).then(function(res){
+          saveBtn.disabled = false;
+          if(res.error){ toast('Save failed: ' + res.error.message, true); return; }
+          toast('Saved.');
+          item.title = upd.title; item.category = upd.category;
+          if(upd.image_url) item.image_url = upd.image_url;
+        });
+      });
+
+      delBtn.addEventListener('click', function(){
+        if(!confirm('Remove this photo from the gallery? This cannot be undone.')) return;
+        sb.from('gallery_items').delete().eq('id', item.id).then(function(res){
+          if(res.error){ toast('Delete failed: ' + res.error.message, true); return; }
+          card.remove();
+          state.gallery = state.gallery.filter(function(g){ return g.id !== item.id; });
+          toast('Photo removed.');
+        });
+      });
+
+      actions.appendChild(saveBtn);
+      actions.appendChild(delBtn);
+      body.appendChild(titleInp);
+      body.appendChild(catSel);
+      body.appendChild(replaceLabel);
+      body.appendChild(fileInp);
+      body.appendChild(actions);
+      card.appendChild(body);
+      grid.appendChild(card);
+    });
+
+    // "Add new" card
+    var addCard = document.createElement('label');
+    addCard.className = 'gal-add-card';
+    addCard.innerHTML = '<span class="plus">+</span>Add a new photo';
+    var addInput = document.createElement('input');
+    addInput.type = 'file'; addInput.accept = 'image/png,image/jpeg,image/webp';
+    addInput.addEventListener('change', function(e){
+      var file = e.target.files[0];
+      if(!file) return;
+      addCard.innerHTML = '<span class="spinner"></span>';
+      uploadImage(file, 'gallery').then(function(url){
+        var maxOrder = state.gallery.reduce(function(m,g){ return Math.max(m, g.sort_order||0); }, 0);
+        return sb.from('gallery_items').insert({
+          title: 'New photo', category: 'gears', image_url: url, sort_order: maxOrder + 1
+        }).select().single();
+      }).then(function(res){
+        if(res.error){ toast('Could not add photo: ' + res.error.message, true); addCard.innerHTML = '<span class="plus">+</span>Add a new photo'; return; }
+        state.gallery.push(res.data);
+        renderGallery();
+        toast('Photo added — edit its title and category below.');
+      }).catch(function(err){
+        toast('Upload failed: ' + err.message, true);
+        addCard.innerHTML = '<span class="plus">+</span>Add a new photo';
+      });
+    });
+    addCard.appendChild(addInput);
+    grid.appendChild(addCard);
+  }
+</script>
+</body>
+</html>

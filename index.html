@@ -527,7 +527,7 @@
 <header class="topbar">
   <div class="wrap">
     <a href="#main" class="brand">
-      <span class="plate"><img src="images/logo.png" alt="Pime Engineering logo"></span>
+      <span class="plate"><img id="logoEl1" src="images/logo.png" alt="Pime Engineering logo"></span>
     </a>
     <nav class="mainnav" aria-label="Primary">
       <a href="#about">About</a>
@@ -552,7 +552,7 @@
 
 <div class="mobnav" id="mobnav">
   <div class="mobtop">
-    <span class="plate" style="background:#F7F8FA;padding:7px 14px;border-radius:4px;box-shadow:0 4px 14px -6px rgba(0,0,0,0.35);"><img src="images/logo.png" alt="Pime Engineering" style="height:30px;"></span>
+    <span class="plate" style="background:#F7F8FA;padding:7px 14px;border-radius:4px;box-shadow:0 4px 14px -6px rgba(0,0,0,0.35);"><img id="logoEl2" src="images/logo.png" alt="Pime Engineering" style="height:30px;"></span>
     <button class="hamburger" id="hamClose" aria-label="Close menu" style="color:#EFEAE0;">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
@@ -571,8 +571,8 @@
   <section class="hero">
     <div class="wrap">
       <div>
-        <h1>Machined to hold its tolerance, built to keep running.</h1>
-        <p class="lede">Pime Engineering is a precision mechanical engineering workshop in Benoni, Gauteng — machining, fabrication and welding, mechanical installation, plant maintenance and equipment repairs, all done in-house.</p>
+        <h1 id="heroHeadlineEl">Machined to hold its tolerance, built to keep running.</h1>
+        <p class="lede" id="heroSubEl">Pime Engineering is a precision mechanical engineering workshop in Benoni, Gauteng — machining, fabrication and welding, mechanical installation, plant maintenance and equipment repairs, all done in-house.</p>
         <div class="ctas">
           <a class="btn btn-gold" href="#contact">Request a quote</a>
           <a class="btn btn-ink" href="tel:+27759097129">Call 075 909 7129</a>
@@ -580,9 +580,9 @@
       </div>
       <div class="hero-figure">
         <div class="frame">
-          <img src="images/img-004.jpg" alt="Machined crown wheel and pinion gear set">
+          <img id="heroImgEl" src="images/img-004.jpg" alt="Machined crown wheel and pinion gear set">
         </div>
-        <div class="cap"><span>Crown wheel &amp; pinion set</span><strong>Cut to close tolerance, in-house</strong></div>
+        <div class="cap"><span id="heroCapLeftEl">Crown wheel &amp; pinion set</span><strong id="heroCapRightEl">Cut to close tolerance, in-house</strong></div>
       </div>
     </div>
   </section>
@@ -612,11 +612,11 @@
     <div class="wrap">
       <div class="about-copy">
         <div class="kicker">About Us</div>
-        <p>Pime Engineering is a precision mechanical engineering company based in Benoni, Gauteng. We specialise in precision machining, metal fabrication and welding, mechanical installation, plant maintenance, and equipment repairs for clients across a range of industrial sectors.</p>
-        <p>Guided by our motto — precision, quality, reliability — we combine hands-on workshop expertise with careful attention to tolerance, finish, and turnaround time, delivering components and services that keep our clients' plants and equipment running.</p>
+        <p id="aboutP1El">Pime Engineering is a precision mechanical engineering company based in Benoni, Gauteng. We specialise in precision machining, metal fabrication and welding, mechanical installation, plant maintenance, and equipment repairs for clients across a range of industrial sectors.</p>
+        <p id="aboutP2El">Guided by our motto — precision, quality, reliability — we combine hands-on workshop expertise with careful attention to tolerance, finish, and turnaround time, delivering components and services that keep our clients' plants and equipment running.</p>
         <div class="mission">
           <div class="label">Our Mission</div>
-          <p>To deliver precise, high-quality mechanical engineering solutions — from custom-machined components to plant maintenance and equipment repairs — that our clients can rely on, every time.</p>
+          <p id="missionEl">To deliver precise, high-quality mechanical engineering solutions — from custom-machined components to plant maintenance and equipment repairs — that our clients can rely on, every time.</p>
         </div>
       </div>
       <div class="about-figure">
@@ -629,7 +629,7 @@
     <div class="wrap">
       <div class="kicker">Specialised Services</div>
       <p class="section-intro">Six disciplines, one workshop — every job moves between them without leaving our floor.</p>
-      <div class="svc-list">
+      <div class="svc-list" id="svcListEl">
         <div class="svc-row">
           <div class="code">PE&nbsp;01</div>
           <div class="name">Mechanical Engineering</div>
@@ -706,7 +706,7 @@
       </div>
       <div>
         <div class="kicker">Why Choose Us</div>
-        <div class="why-grid" style="margin-top:32px;">
+        <div class="why-grid" style="margin-top:32px;" id="whyGridEl">
           <div class="why-item">
             <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="0.6" fill="currentColor"/></svg></span>
             <h3>Precision Workmanship</h3>
@@ -873,7 +873,7 @@
   <div class="wrap">
     <div>
       <div class="fbrand">
-        <span class="plate"><img src="images/logo.png" alt="Pime Engineering"></span>
+        <span class="plate"><img id="logoEl3" src="images/logo.png" alt="Pime Engineering"></span>
       </div>
       <p class="tag">Precision mechanical engineering — machining, fabrication and plant maintenance for industrial clients across Gauteng.</p>
     </div>
@@ -938,69 +938,61 @@
     a.addEventListener('click', function(){ mobnav.classList.remove('open'); });
   });
 
-  // Gallery filter
+  // Gallery filter + lightbox — event-delegated so this keeps working
+  // even after the gallery grid is rebuilt with live data from Supabase.
   var filts = document.querySelectorAll('.filt');
-  var shots = document.querySelectorAll('.shot');
+  var galleryEl = document.getElementById('gallery');
+  var activeCat = 'all';
+
+  function applyFilter(){
+    galleryEl.querySelectorAll('.shot').forEach(function(s){
+      if(activeCat === 'all' || s.getAttribute('data-cat') === activeCat){
+        s.classList.remove('hide');
+      } else {
+        s.classList.add('hide');
+      }
+    });
+  }
   filts.forEach(function(btn){
     btn.addEventListener('click', function(){
       filts.forEach(function(b){ b.classList.remove('active'); });
       btn.classList.add('active');
-      var cat = btn.getAttribute('data-cat');
-      shots.forEach(function(s){
-        if(cat === 'all' || s.getAttribute('data-cat') === cat){
-          s.classList.remove('hide');
-        } else {
-          s.classList.add('hide');
-        }
-      });
+      activeCat = btn.getAttribute('data-cat');
+      applyFilter();
     });
   });
+  window.__reapplyGalleryFilter = applyFilter;
 
-  // Lightbox
   var lb = document.getElementById('lightbox');
   var lbImg = document.getElementById('lbImg');
   var lbCap = document.getElementById('lbCap');
-  var shotArr = Array.prototype.slice.call(shots);
   var current = 0;
 
+  function visibleShots(){
+    return Array.prototype.filter.call(galleryEl.querySelectorAll('.shot'), function(s){ return !s.classList.contains('hide'); });
+  }
   function openAt(i){
-    var visible = shotArr.filter(function(s){ return !s.classList.contains('hide'); });
+    var visible = visibleShots();
     if(visible.length === 0) return;
-    current = i;
-    var s = visible[((current % visible.length) + visible.length) % visible.length];
+    current = ((i % visible.length) + visible.length) % visible.length;
+    var s = visible[current];
     var img = s.querySelector('img');
     lbImg.src = img.src;
     lbImg.alt = img.alt;
     lbCap.textContent = img.alt;
     lb.classList.add('open');
-    lb._visible = visible;
   }
-  shotArr.forEach(function(s, i){
-    s.addEventListener('click', function(){
-      var visible = shotArr.filter(function(x){ return !x.classList.contains('hide'); });
-      var idx = visible.indexOf(s);
-      current = idx;
-      lb._visible = visible;
-      openAt(idx);
-    });
+  galleryEl.addEventListener('click', function(e){
+    var shot = e.target.closest('.shot');
+    if(!shot) return;
+    var idx = visibleShots().indexOf(shot);
+    openAt(idx);
   });
   function closeLb(){ lb.classList.remove('open'); }
   document.getElementById('lbClose').addEventListener('click', closeLb);
   lb.addEventListener('click', function(e){ if(e.target === lb) closeLb(); });
-  document.getElementById('lbPrev').addEventListener('click', function(){
-    var visible = lb._visible || shotArr;
-    current = (current - 1 + visible.length) % visible.length;
-    var s = visible[current];
-    lbImg.src = s.querySelector('img').src;
-    lbCap.textContent = s.querySelector('img').alt;
-  });
-  document.getElementById('lbNext').addEventListener('click', function(){
-    var visible = lb._visible || shotArr;
-    current = (current + 1) % visible.length;
-    var s = visible[current];
-    lbImg.src = s.querySelector('img').src;
-    lbCap.textContent = s.querySelector('img').alt;
-  });
+  document.getElementById('lbPrev').addEventListener('click', function(){ openAt(current - 1); });
+  document.getElementById('lbNext').addEventListener('click', function(){ openAt(current + 1); });
   document.addEventListener('keydown', function(e){
     if(!lb.classList.contains('open')) return;
     if(e.key === 'Escape') closeLb();
@@ -1024,6 +1016,95 @@
     );
     window.location.href = 'mailto:info@pimeeng.co.za?subject=' + subject + '&body=' + body;
   });
+})();
+</script>
+
+<!-- Live content: pulls admin-edited text/images from Supabase and overlays
+     them on top of the content already in this page. If this fails for any
+     reason (offline, Supabase down, etc.) the static content above still
+     works fine — this is a progressive enhancement, not a requirement. -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/supabase-js/2.45.4/umd/supabase.min.js"></script>
+<script>
+(function(){
+  try{
+    var SUPABASE_URL = "https://rkyxzgkakiipagrznpsw.supabase.co";
+    var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJreXh6Z2tha2lpcGFncnpucHN3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAxOTczMzAsImV4cCI6MjEwNTc3MzMzMH0.ASZXz153t4hlXcMDOOkFtdSikYQVFcQTsOGlzF-3Thc";
+    var sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    function setText(id, val){
+      if(!val) return;
+      var el = document.getElementById(id);
+      if(el) el.textContent = val;
+    }
+    function setImg(id, url){
+      if(!url) return;
+      var el = document.getElementById(id);
+      if(el) el.src = url;
+    }
+
+    sb.from('site_content').select('data').eq('id', true).single().then(function(res){
+      if(res.error || !res.data) return;
+      var d = res.data.data || {};
+
+      setImg('logoEl1', d.logo_url); setImg('logoEl2', d.logo_url); setImg('logoEl3', d.logo_url);
+      setImg('heroImgEl', d.hero_image_url);
+      setText('heroHeadlineEl', d.hero_headline);
+      setText('heroSubEl', d.hero_sub);
+      setText('heroCapLeftEl', d.hero_caption_left);
+      setText('heroCapRightEl', d.hero_caption_right);
+      setText('aboutP1El', d.about_p1);
+      setText('aboutP2El', d.about_p2);
+      setText('missionEl', d.mission);
+
+      if(Array.isArray(d.services) && d.services.length){
+        var svcWrap = document.getElementById('svcListEl');
+        svcWrap.innerHTML = '';
+        d.services.forEach(function(s){
+          var row = document.createElement('div');
+          row.className = 'svc-row';
+          row.innerHTML =
+            '<div class="code">' + (s.code || '') + '</div>' +
+            '<div class="name">' + (s.name || '') + '</div>' +
+            '<div class="desc">' + (s.desc || '') + '</div>';
+          svcWrap.appendChild(row);
+        });
+      }
+
+      if(Array.isArray(d.why) && d.why.length){
+        var whyWrap = document.getElementById('whyGridEl');
+        var genericIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/></svg>';
+        whyWrap.innerHTML = '';
+        d.why.forEach(function(w){
+          var item = document.createElement('div');
+          item.className = 'why-item';
+          item.innerHTML =
+            '<span class="icon">' + genericIcon + '</span>' +
+            '<h3>' + (w.title || '') + '</h3>' +
+            '<p>' + (w.desc || '') + '</p>';
+          whyWrap.appendChild(item);
+        });
+      }
+    }).catch(function(){});
+
+    sb.from('gallery_items').select('*').order('sort_order').then(function(res){
+      if(res.error || !res.data || !res.data.length) return;
+      var grid = document.getElementById('gallery');
+      grid.innerHTML = '';
+      res.data.forEach(function(item){
+        var fig = document.createElement('figure');
+        fig.className = 'shot';
+        fig.setAttribute('data-cat', item.category || 'gears');
+        fig.innerHTML =
+          '<img loading="lazy" src="' + item.image_url + '" alt="' + (item.title || '').replace(/"/g,'&quot;') + '">' +
+          '<figcaption>' + (item.title || '') + '</figcaption>';
+        grid.appendChild(fig);
+      });
+      if(window.__reapplyGalleryFilter) window.__reapplyGalleryFilter();
+    }).catch(function(){});
+  } catch(e){
+    // Static content already in the page keeps working regardless.
+    console.warn('Live content failed to load, showing static content.', e);
+  }
 })();
 </script>
 

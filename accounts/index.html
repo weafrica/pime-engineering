@@ -186,6 +186,14 @@
 
   /* ============================== CONSTANTS ============================== */
   var LOGO = "../images/logo.png";
+  // Pick up a custom logo if one has been uploaded via the site content editor (/admin).
+  if(sb){
+    sb.from('site_content').select('data').eq('id', true).single().then(function(res){
+      if(!res.error && res.data && res.data.data && res.data.data.logo_url){
+        LOGO = res.data.data.logo_url;
+      }
+    }).catch(function(){});
+  }
   var COMPANY = {
     name: "Pime Engineering",
     address: "11b Liverpool Road, Benoni, 1501",
